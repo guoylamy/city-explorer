@@ -94,8 +94,9 @@ print(dataframe_US['State'])
 
 #----------volcanic----------------not complete
 def getplace(lat, lon):
-    url = "http://maps.googleapis.com/maps/api/geocode/json?"
-    url += "latlng=%s,%s&sensor=false" % (lat, lon)
+    url = "http://maps.googleapis.com/maps/api/place/findplacefromtext/json?"
+    url += "location=%s,%s&radius=100&key=" % (lat, lon)
+    print(url)
     v = urllib.request.urlopen(url).read()
     j = json.loads(v)
     print(j)
@@ -110,7 +111,7 @@ def getplace(lat, lon):
     return town, country
 
 
-#print(getplace(51.1, 0.1))
+print(getplace(51.1, 0.1))
 
 
 #---------earthquake-------------not complete
