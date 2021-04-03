@@ -94,7 +94,7 @@ print(dataframe_US['State'])
 
 #----------volcanic----------------not complete
 def getplace(lat, lon):
-    url = "http://maps.googleapis.com/maps/api/place/findplacefromtext/json?"
+    url = "http://maps.googleapis.com/maps/api/place/nearbysearch/json?"
     url += "location=%s,%s&radius=100&key=" % (lat, lon)
     print(url)
     v = urllib.request.urlopen(url).read()
