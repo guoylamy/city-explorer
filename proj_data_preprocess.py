@@ -4,8 +4,6 @@ import urllib.request
 import json
 
 
-
-
 #----------museum----------------
 address = './museum/tripadvisor_museum_USonly.csv'
 
@@ -143,12 +141,3 @@ dataframe3.drop(dataframe3[dataframe3['Stabr']=='PR'].index, inplace=True)
 
 dataframe4.drop(dataframe4[dataframe4['State']=='US'].index, inplace=True)
 dataframe4.drop(dataframe4[dataframe4['State']=='PR'].index, inplace=True)
-
-
-
-
-
-
-
-
-
