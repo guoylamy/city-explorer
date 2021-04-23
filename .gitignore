@@ -1,4 +1,5 @@
 .DS_Store
+pre-process/data/*
 data/*
 dbconfig.json
 *.csv
