@@ -10,6 +10,9 @@ import Grid from '@material-ui/core/Grid';
 import Brightness5Icon from '@material-ui/icons/Brightness5';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import Result from './ClimateResult/Result';
+import PrecipitationResult from './ClimateResult/PrecipitationResult';
+import TemperatureDiffResult from './ClimateResult/TemperatureDiffResult';
 
 function Copyright() {
   return (
@@ -51,8 +54,23 @@ const useStyles = theme => ({
 	marginTop: theme.spacing(1),
   },
   submit: {
-	margin: theme.spacing(3, 0, 2),
+	margin: theme.spacing(3, 0, 15),
   },
+  result: {
+  	padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  rainImg: {
+  	backgroundImage: 'url(https://source.unsplash.com/random)',
+  	backgroundRepeat: 'no-repeat',
+	backgroundColor:
+	  theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+	backgroundSize: 'cover',
+	backgroundPosition: 'center',
+	marginTop: theme.spacing(7),
+  }
 });
 
 class Climate extends React.Component {
@@ -61,8 +79,8 @@ class Climate extends React.Component {
 		return (
 			<Grid container component="main" className={classes.root}>
 			  <CssBaseline />
-			  <Grid item xs={false} sm={4} md={7} className={classes.image} />
-			  <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+			  <Grid item xs={false} sm={4} md={5} className={classes.image} />
+			  <Grid item xs={12} sm={8} md={7} component={Paper} elevation={6} square>
 				<div className={classes.paper}>
 				  <Avatar className={classes.avatar}>
 					<Brightness5Icon />
@@ -89,9 +107,10 @@ class Climate extends React.Component {
 					  fullWidth
 					  name="date"
 					  label="Date"
-					  type="password"
+					  type="date"
+					  defaultValue="2021-04-25"
 					  id="date"
-					  autoComplete="current-password"
+					  autoComplete="date"
 					/>
 					<Button
 					  type="submit"
@@ -102,11 +121,19 @@ class Climate extends React.Component {
 					>
 					  City Overview
 					</Button>
+				  	<Result />
 					<Box mt={5}>
 					  <Copyright />
 					</Box>
 				  </form>
 				</div>
+			  </Grid>
+			  <Grid item xs={12} className={classes.rainImg} />
+			  <Grid item xs={6} component={Paper} elevation={6} square>
+			  	<PrecipitationResult />
+			  </Grid>
+			  <Grid item xs={6} component={Paper} elevation={6} square>
+			  	<TemperatureDiffResult />
 			  </Grid>
 			</Grid>
 		);
