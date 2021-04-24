@@ -29,10 +29,19 @@ function Copyright() {
 
 const useStyles = theme => ({
   root: {
-	height: '100vh',
+	height: '170vh',
+  },
+  rainImg: {
+  	backgroundImage: 'url(https://images.unsplash.com/photo-1619233651146-7364c945c3ee?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNnx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60)',
+  	backgroundRepeat: 'no-repeat',
+	backgroundColor:
+	  theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+	backgroundSize: 'cover',
+	backgroundPosition: 'center',
+	margin: theme.spacing(3, 0, 3),
   },
   image: {
-	backgroundImage: 'url(https://source.unsplash.com/random)',
+	backgroundImage: 'url(https://images.unsplash.com/photo-1619203596659-6029850f0c73?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2MHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60)',
 	backgroundRepeat: 'no-repeat',
 	backgroundColor:
 	  theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
@@ -60,17 +69,8 @@ const useStyles = theme => ({
   	padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
-    flexDirection: 'column',
+    flexDirection: 'row',
   },
-  rainImg: {
-  	backgroundImage: 'url(https://source.unsplash.com/random)',
-  	backgroundRepeat: 'no-repeat',
-	backgroundColor:
-	  theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-	backgroundSize: 'cover',
-	backgroundPosition: 'center',
-	marginTop: theme.spacing(7),
-  }
 });
 
 class Climate extends React.Component {
@@ -122,9 +122,6 @@ class Climate extends React.Component {
 					  City Overview
 					</Button>
 				  	<Result />
-					<Box mt={5}>
-					  <Copyright />
-					</Box>
 				  </form>
 				</div>
 			  </Grid>
@@ -134,6 +131,11 @@ class Climate extends React.Component {
 			  </Grid>
 			  <Grid item xs={6} component={Paper} elevation={6} square>
 			  	<TemperatureDiffResult />
+			  </Grid>
+			  <Grid item xs={12}>
+			  	<Box mt={4}>
+					<Copyright />
+				</Box>
 			  </Grid>
 			</Grid>
 		);

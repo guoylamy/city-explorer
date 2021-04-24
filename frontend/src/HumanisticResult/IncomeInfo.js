@@ -7,33 +7,34 @@ import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
 // Generate Order Data
-function createData(id, state, temperature) {
-  return { id, state, temperature };
+function createData(rank, county, state, unemploy_r) {
+  return { rank, county, state, unemploy_r };
 }
 
 const rows = [
-  createData(0, 'LA', '25'),
-  createData(1, 'PA', '19' ),
+  createData(1, '', 'PA', '100000'),
 ];
 
-export default function TemperatureDiffResult() {
+export default function IncomeInfo() {
   return (
     <React.Fragment>
-      <Title>Top 10 states with smallest average daily temperature difference</Title>
+      <Title>10 County with highest median household income</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
+            <TableCell>Rank</TableCell>
+            <TableCell>County</TableCell>
             <TableCell>State</TableCell>
-            <TableCell align="right">Temperature</TableCell>
+            <TableCell align="center">Median Household Income</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
+            <TableRow key={row.rank}>
+              <TableCell>{row.rank}</TableCell>
+              <TableCell>{row.county}</TableCell>
               <TableCell>{row.state}</TableCell>
-              <TableCell align="right">{row.temperature}</TableCell>
+              <TableCell align="center">{row.unemploy_r}</TableCell>
             </TableRow>
           ))}
         </TableBody>
