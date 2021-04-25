@@ -1,6 +1,8 @@
 .DS_Store
 pre-process/data/*
 data/*
+*/yarn.lock
+*/package-lock.json
 dbconfig.json
 *.csv
 ./frontend/node_modules/*
