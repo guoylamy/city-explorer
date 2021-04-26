@@ -35,16 +35,30 @@ connection.query(query, function(err, rows, fields) {
 });
 };
 
+
+
 /* ---- home (2. top 10 popular routes) ---- */
+// CREATE VIEW cityStateLatLon AS(
+//   SELECT latitude, longtitude AS longitude, city, state_id
+//   FROM City_State NATURAL JOIN City_Name);
+
 const getTop10routes = (req, res) => {
   var query = `
-  SELECT src_airport, a1.city AS SourceCity, a1.state AS SourceState, 
+  SELECT src_airport, SourceCity, SourceState, src_latitude, src_longitude,
+  dst_airport, DestCity, DestState,latitude AS dst_latitude, longitude AS dst_longitude, passenger_num
+  FROM
+  (SELECT src_airport, SourceCity, SourceState, latitude AS src_latitude, longitude AS src_longitude,
+  dst_airport, DestCity,DestState, passenger_num
+  FROM(
+  SELECT src_airport, a1.city AS SourceCity, a1.state AS SourceState,
   dst_airport, a2.city AS DestCity, a2.state AS DestState, SUM(passengers) AS passenger_num
   FROM Airplane_Route r JOIN Airport a1 ON r.src_airport = a1.airport_code 
   JOIN Airport a2 ON r.dst_airport = a2.airport_code
   GROUP BY src_airport, dst_airport
   ORDER BY SUM(passengers) DESC
-  LIMIT 10;
+  LIMIT 10) t1
+  JOIN cityStateLatLon ON t1.SourceCity=cityStateLatLon.city AND t1.SourceState=cityStateLatLon.state_id) t2
+  JOIN cityStateLatLon ON t2.DestCity=cityStateLatLon.city AND t2.DestState=cityStateLatLon.state_id;
   `;
 connection.query(query, function(err, rows, fields) {
   if (err) console.log(err);
@@ -72,9 +86,17 @@ connection.query(query, function(err, rows, fields) {
 /* ---- home (3. popular airplane routes by season) ---- */
 const getTop1Seasonroutes = (req, res) => {
   var query = `
+  SELECT season, src_city, src_state, src_latitude, src_longitude,
+  dst_city, dst_state, latitude AS dst_latitude, longitude AS dst_longitude, passenger_num
+  FROM(
+  SELECT season, src_city, src_state, latitude AS src_latitude, longitude AS src_longitude,
+  dst_city, dst_state,passenger_num
+  FROM(
   SELECT season, src_city, src_state, dst_city, dst_state, MAX(sum_num) AS passenger_num
   FROM seaon_route_num
-  GROUP BY season;
+  GROUP BY season) t1
+  JOIN cityStateLatLon ON t1.src_city=cityStateLatLon.city AND t1.src_state=cityStateLatLon.state_id) t2
+  JOIN cityStateLatLon ON t2.dst_city=cityStateLatLon.city AND t2.dst_state=cityStateLatLon.state_id;
   `;
 connection.query(query, function(err, rows, fields) {
   if (err) console.log(err);
@@ -114,13 +136,18 @@ connection.query(query, function(err, rows, fields) {
 // GROUP BY file_name, YEAR(date_record);
 const getStateTmax = (req, res) => {
   var query = `
+  SELECT state_name, cnt, latitude,longtitude AS longitude
+  FROM(
+  SELECT * FROM(
   SELECT state_name, COUNT(year_info) AS cnt
   FROM (SELECT state_id, year_info
-    FROM state_file sf INNER JOIN tmax_yearly ty ON sf.file_name = ty.file_name
-    WHERE (ty.year_info, tmax) IN (SELECT year_info, MAX(tmax) FROM tmax_yearly GROUP BY year_info)) yearly_maxT_state NATURAL JOIN State_Info
+  FROM state_file sf INNER JOIN tmax_yearly ty ON sf.file_name = ty.file_name
+  WHERE (ty.year_info, tmax) IN (SELECT year_info, MAX(tmax) FROM tmax_yearly GROUP BY year_info)) yearly_maxT_state NATURAL JOIN State_Info
   GROUP BY state_name
   ORDER BY COUNT(year_info) DESC
-  LIMIT 10;
+  LIMIT 10) t1 NATURAL JOIN state_abbr) t2
+  NATURAL JOIN (SELECT * FROM City_State
+  GROUP BY state_id) t3;
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
@@ -134,10 +161,12 @@ const getStateTmax = (req, res) => {
 /* ---- home (6. Top 10 (rank) museum with location ) ---- */
 const getTop10Museum = (req, res) => {
   var query = `
+  SELECT * FROM(
   SELECT museum_name, city, state
   FROM Museum
   ORDER BY rating desc, rank asc, review_count desc
-  LIMIT 10;
+  LIMIT 10) t1
+  JOIN cityStateLatLon ON t1.city=cityStateLatLon.city AND t1.state=cityStateLatLon.state_id;
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
