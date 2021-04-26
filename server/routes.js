@@ -161,7 +161,7 @@ const getStateTmax = (req, res) => {
 /* ---- home (6. Top 10 (rank) museum with location ) ---- */
 const getTop10Museum = (req, res) => {
   var query = `
-  SELECT * FROM(
+  SELECT museum_name, t1.city, t1.state, latitude, longitude FROM(
   SELECT museum_name, city, state
   FROM Museum
   ORDER BY rating desc, rank asc, review_count desc
