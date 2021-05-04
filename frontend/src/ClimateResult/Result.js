@@ -8,11 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-// Generate Order Data
-function createData(id, date, maxT, minT, precipitation, extreme) {
-  return { id, date, maxT, minT, precipitation, extreme };
-}
-
 function fetchData(){
   fetch("http://localhost:8081/humanistic/mus",{
     method: "GET"
@@ -59,8 +54,7 @@ export default function Result(row) {
             <TableCell>Date</TableCell>
             <TableCell>Maximum Temperature</TableCell>
             <TableCell>Minimum Temperature</TableCell>
-            <TableCell>Precipitation</TableCell>
-            <TableCell align="right">Occurrence Of Extreme Weather</TableCell>
+            <TableCell align="right">Precipitation</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -69,8 +63,7 @@ export default function Result(row) {
               <TableCell>{row.month}</TableCell>
               <TableCell>{row.tmax}</TableCell>
               <TableCell>{row.tmin}</TableCell>
-              <TableCell>{row.prcp}</TableCell>
-              <TableCell align="right">{row.extreme}</TableCell>
+              <TableCell align="right">{row.prcp}</TableCell>
             </TableRow>
           ))}
         </TableBody>

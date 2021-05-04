@@ -10,20 +10,21 @@ import Grid from '@material-ui/core/Grid';
 import Brightness5Icon from '@material-ui/icons/Brightness5';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import MenuItem from '@material-ui/core/MenuItem';
 import Result from './ClimateResult/Result';
 import PrecipitationResult from './ClimateResult/PrecipitationResult';
 import TemperatureDiffResult from './ClimateResult/TemperatureDiffResult';
 
 function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Climate Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
+	<Typography variant="body2" color="textSecondary" align="center">
+	  {'Copyright © '}
+	  <Link color="inherit" href="https://material-ui.com/">
+		Climate Website
+	  </Link>{' '}
+	  {new Date().getFullYear()}
+	  {'.'}
+	</Typography>
   );
 }
 
@@ -32,8 +33,8 @@ const useStyles = theme => ({
 	height: '230vh',
   },
   rainImg: {
-  	backgroundImage: 'url(https://images.unsplash.com/photo-1619233651146-7364c945c3ee?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNnx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60)',
-  	backgroundRepeat: 'no-repeat',
+	backgroundImage: 'url(https://images.unsplash.com/photo-1619233651146-7364c945c3ee?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNnx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60)',
+	backgroundRepeat: 'no-repeat',
 	backgroundColor:
 	  theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
 	backgroundSize: 'cover',
@@ -69,11 +70,14 @@ const useStyles = theme => ({
 	margin: theme.spacing(3, 0, 15),
   },
   result: {
-  	padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'row',
+	padding: theme.spacing(2),
+	display: 'flex',
+	overflow: 'auto',
+	flexDirection: 'row',
   },
+  slide: {
+
+  }
 });
 
 class Climate extends React.Component {
@@ -88,7 +92,10 @@ class Climate extends React.Component {
 			tempMonth:"",
 			climateR: [],
 			precR: [],
-			tempR: []
+			tempR: [],
+			year: [],
+			month: [],
+			position: []
 		};
 
 		this.getClimateResult = this.getClimateResult.bind(this);
@@ -100,7 +107,7 @@ class Climate extends React.Component {
 		  method: "GET"
 		})
 		.then(res => {
-		    return res.json();
+			return res.json();
 		}, err => {
 		  console.log(err);
 		})
@@ -109,7 +116,7 @@ class Climate extends React.Component {
 		  climate_l = Array.from(climate_l);
 
 		  this.setState({
-		    climateR: climate_l
+			climateR: climate_l
 		  });
 		}, err => {
 		  // Print the error if there is one.
@@ -121,7 +128,7 @@ class Climate extends React.Component {
 		  method: "GET"
 		})
 		.then(res => {
-		    return res.json();
+			return res.json();
 		}, err => {
 		  console.log(err);
 		})
@@ -130,7 +137,7 @@ class Climate extends React.Component {
 		  climate_l = Array.from(climate_l);
 
 		  this.setState({
-		    precR: climate_l
+			precR: climate_l
 		  });
 		}, err => {
 		  // Print the error if there is one.
@@ -142,7 +149,7 @@ class Climate extends React.Component {
 		  method: "GET"
 		})
 		.then(res => {
-		    return res.json();
+			return res.json();
 		}, err => {
 		  console.log(err);
 		})
@@ -151,7 +158,66 @@ class Climate extends React.Component {
 		  climate_l = Array.from(climate_l);
 
 		  this.setState({
-		    tempR: climate_l
+			tempR: climate_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	}
+	componentDidMount() {
+		fetch("http://localhost:8081/climate/getyear",{
+		  method: "GET"
+		})
+		.then(res => {
+			return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(museum_l => {
+		  if (!museum_l) return;
+		  museum_l = Array.from(museum_l);
+
+		  this.setState({
+			year: museum_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+		fetch("http://localhost:8081/climate/getmonth",{
+		  method: "GET"
+		})
+		.then(res => {
+			return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(museum_l => {
+		  if (!museum_l) return;
+		  museum_l = Array.from(museum_l);
+
+		  this.setState({
+			month: museum_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+		fetch("http://localhost:8081/climate/getPlace",{
+		  method: "GET"
+		})
+		.then(res => {
+			return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(place => {
+		  if (!place) return;
+		  place = Array.from(place);
+
+		  this.setState({
+			position: place
 		  });
 		}, err => {
 		  // Print the error if there is one.
@@ -200,12 +266,13 @@ class Climate extends React.Component {
 					<Brightness5Icon />
 				  </Avatar>
 				  <Typography component="h1" variant="h5">
-					City Overview
+					City Overview (Monthly)
 				  </Typography>
 				  <form className={classes.form} noValidate>
 					<TextField
 					  variant="outlined"
 					  margin="normal"
+					  select
 					  required
 					  fullWidth
 					  id="city"
@@ -213,10 +280,17 @@ class Climate extends React.Component {
 					  name="city"
 					  onChange={handleCityChange}
 					  autoFocus
-					/>
+					>
+						{this.state.position.map((option) => (
+							<MenuItem key={option.city} value={option.city}>
+								{option.city}
+							</MenuItem>
+						))}
+					</TextField>
 					<TextField
 					  variant="outlined"
 					  margin="normal"
+					  select
 					  required
 					  fullWidth
 					  name="state"
@@ -224,7 +298,13 @@ class Climate extends React.Component {
 					  type="state"
 					  id="state"
 					  onChange={handleStateChange}
-					/>
+					>
+						{this.state.position.map((option) => (
+							<MenuItem key={option.state} value={option.state}>
+								{option.state}
+							</MenuItem>
+						))}
+					</TextField>
 					<Button
 					  fullWidth
 					  variant="contained"
@@ -234,32 +314,45 @@ class Climate extends React.Component {
 					>
 					  City Overview
 					</Button>
-				  	<Result data={this.state.climateR}/>
+					<Result data={this.state.climateR}/>
 				  </form>
 				</div>
 			  </Grid>
 			  <Grid item xs={12} className={classes.rainImg} />
 			  <Grid item xs={6} component={Paper} elevation={6} square>
-			  	<form className={classes.form1} noValidate>
+				<form className={classes.form1} noValidate>
 					<TextField
 					  variant="outlined"
 					  margin="normal"
-					  required
+					  select
 					  id="month"
 					  label="Month"
 					  name="month"
 					  onChange={handlePrecMonthChange}
-					/>
+					>
+						{this.state.month.map((option) => (
+							<MenuItem key={option.month} value={option.month}>
+								{option.month}
+							</MenuItem>
+						))}
+					</TextField>
 					<TextField
 					  variant="outlined"
 					  margin="normal"
+					  select
 					  required
 					  name="year"
 					  label="Year"
 					  type="year"
 					  id="year"
 					  onChange={handlePrecYearChange}
-					/>
+					>
+						{this.state.year.map((option) => (
+							<MenuItem key={option.year} value={option.year}>
+								{option.year}
+							</MenuItem>
+						))}
+					</TextField>
 					<Button
 					  variant="contained"
 					  color="primary"
@@ -267,30 +360,44 @@ class Climate extends React.Component {
 					>
 					  Query
 					</Button>
-				  	<PrecipitationResult data={this.state.precR}/>
+					<PrecipitationResult data={this.state.precR}/>
 				</form>
 			  </Grid>
 			  <Grid item xs={6} component={Paper} elevation={6} square>
-			  	<form className={classes.form1} noValidate>
+				<form className={classes.form1} noValidate>
 					<TextField
 					  variant="outlined"
 					  margin="normal"
+					  select
 					  required
 					  id="month"
 					  label="Month"
 					  name="month"
 					  onChange={handleTempMonthChange}
-					/>
+					>
+						{this.state.month.map((option) => (
+							<MenuItem key={option.month} value={option.month}>
+								{option.month}
+							</MenuItem>
+						))}
+					</TextField>
 					<TextField
 					  variant="outlined"
 					  margin="normal"
+					  select
 					  required
 					  name="year"
 					  label="Year"
 					  type="year"
 					  id="year"
 					  onChange={handleTempYearChange}
-					/>
+					>
+						{this.state.year.map((option) => (
+							<MenuItem key={option.year} value={option.year}>
+								{option.year}
+							</MenuItem>
+						))}
+					</TextField>
 					<Button
 					  variant="contained"
 					  color="primary"
@@ -298,11 +405,11 @@ class Climate extends React.Component {
 					>
 					  Query
 					</Button>
-			  		<TemperatureDiffResult data={this.state.tempR}/>
-			  	</form>
+					<TemperatureDiffResult data={this.state.tempR}/>
+				</form>
 			  </Grid>
 			  <Grid item xs={12}>
-			  	<Box mt={4}>
+				<Box mt={4}>
 					<Copyright />
 				</Box>
 			  </Grid>
