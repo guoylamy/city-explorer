@@ -13,9 +13,29 @@ function createData(id, date, maxT, minT, precipitation, extreme) {
   return { id, date, maxT, minT, precipitation, extreme };
 }
 
-const rows = [
-  createData(0, '16 Mar, 2019', '-3', '31', '110', 'NULL'),
-];
+function fetchData(){
+  fetch("http://localhost:8081/humanistic/mus",{
+    method: "GET"
+  })
+  .then(res => {
+      return res.json();
+  }, err => {
+    console.log(err);
+  })
+  .then(museum_l => {
+    if (!museum_l) return;
+    const museum_item = museum_l.map((results, i) =>
+      <option key={i} className="decadesOption" value={results.decade}>{results.decade}</option>
+    );
+
+    this.setState({
+      rows: museum_item
+    });
+  }, err => {
+    // Print the error if there is one.
+    console.log(err);
+  });
+}
 
 function preventDefault(event) {
   event.preventDefault();
@@ -27,8 +47,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Result() {
+export default function Result(row) {
   const classes = useStyles();
+  const rows = row.data;
   return (
     <React.Fragment>
       <Title>City Info</Title>
@@ -45,10 +66,10 @@ export default function Result() {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.maxT}</TableCell>
-              <TableCell>{row.minT}</TableCell>
-              <TableCell>{row.precipitation}</TableCell>
+              <TableCell>{row.month}</TableCell>
+              <TableCell>{row.tmax}</TableCell>
+              <TableCell>{row.tmin}</TableCell>
+              <TableCell>{row.prcp}</TableCell>
               <TableCell align="right">{row.extreme}</TableCell>
             </TableRow>
           ))}

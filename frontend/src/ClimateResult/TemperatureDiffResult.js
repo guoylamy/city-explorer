@@ -6,17 +6,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-// Generate Order Data
-function createData(id, state, temperature) {
-  return { id, state, temperature };
-}
-
-const rows = [
-  createData(0, 'LA', '25'),
-  createData(1, 'PA', '19' ),
-];
-
-export default function TemperatureDiffResult() {
+export default function TemperatureDiffResult(row) {
+  const rows = row.data;
   return (
     <React.Fragment>
       <Title>Top 10 states with smallest average daily temperature difference</Title>
@@ -33,7 +24,7 @@ export default function TemperatureDiffResult() {
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.state}</TableCell>
-              <TableCell align="right">{row.temperature}</TableCell>
+              <TableCell align="right">{row.temp}</TableCell>
             </TableRow>
           ))}
         </TableBody>

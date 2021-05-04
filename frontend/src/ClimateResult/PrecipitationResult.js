@@ -6,16 +6,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-// Generate Order Data
-function createData(id, state, precipitation) {
-  return { id, state, precipitation };
-}
 
-const rows = [
-  createData(0, 'LA', '110'),
-];
-
-export default function PrecipitationResult() {
+export default function PrecipitationResult(row) {
+  const rows = row.data;
   return (
     <React.Fragment>
       <Title>Top 10 states with least number of days of precipitation</Title>
@@ -31,8 +24,8 @@ export default function PrecipitationResult() {
           {rows.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
-              <TableCell>{row.state}</TableCell>
-              <TableCell align="right">{row.precipitation}</TableCell>
+              <TableCell>{row.state_name}</TableCell>
+              <TableCell align="right">{row.cnt}</TableCell>
             </TableRow>
           ))}
         </TableBody>

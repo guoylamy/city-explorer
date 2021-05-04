@@ -29,7 +29,7 @@ function Copyright() {
 
 const useStyles = theme => ({
   root: {
-	height: '170vh',
+	height: '230vh',
   },
   rainImg: {
   	backgroundImage: 'url(https://images.unsplash.com/photo-1619233651146-7364c945c3ee?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNnx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60)',
@@ -62,6 +62,9 @@ const useStyles = theme => ({
 	width: '100%', // Fix IE 11 issue.
 	marginTop: theme.spacing(1),
   },
+  form1: {
+	width: '100%', // Fix IE 11 issue.
+  },
   submit: {
 	margin: theme.spacing(3, 0, 15),
   },
@@ -74,8 +77,119 @@ const useStyles = theme => ({
 });
 
 class Climate extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			climateCity:"",
+			climateState:"",
+			precYear:"",
+			precMonth:"",
+			tempYear:"",
+			tempMonth:"",
+			climateR: [],
+			precR: [],
+			tempR: []
+		};
+
+		this.getClimateResult = this.getClimateResult.bind(this);
+		this.getPrecResult = this.getPrecResult.bind(this);
+		this.getTempResult = this.getTempResult.bind(this);
+	}
+	getClimateResult (){
+		fetch("http://localhost:8081/climate/city/monthly_climate/"+this.state.climateCity+"/"+this.state.climateState,{
+		  method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(climate_l => {
+		  if (!climate_l) return;
+		  climate_l = Array.from(climate_l);
+
+		  this.setState({
+		    climateR: climate_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	}
+	getPrecResult (){
+		fetch("http://localhost:8081/climate/time/prcp/"+this.state.precYear+"/"+this.state.precMonth,{
+		  method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(climate_l => {
+		  if (!climate_l) return;
+		  climate_l = Array.from(climate_l);
+
+		  this.setState({
+		    precR: climate_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	}
+	getTempResult (){
+		fetch("http://localhost:8081/climate/time/temp_diff/"+this.state.tempYear+"/"+this.state.tempMonth,{
+		  method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(climate_l => {
+		  if (!climate_l) return;
+		  climate_l = Array.from(climate_l);
+
+		  this.setState({
+		    tempR: climate_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	}
 	render() {
 		const { classes } = this.props;
+		const handleCityChange = (e) => {
+			this.setState({
+				climateCity: e.target.value
+			});
+		};
+		const handleStateChange = (e) => {
+			this.setState({
+				climateState: e.target.value
+			});
+		};
+		const handlePrecYearChange = (e) => {
+			this.setState({
+				precYear: e.target.value
+			});
+		};
+		const handlePrecMonthChange = (e) => {
+			this.setState({
+				precMonth: e.target.value
+			});
+		};
+		const handleTempYearChange = (e) => {
+			this.setState({
+				tempYear: e.target.value
+			});
+		};
+		const handleTempMonthChange = (e) => {
+			this.setState({
+				tempMonth: e.target.value
+			});
+		};
 		return (
 			<Grid container component="main" className={classes.root}>
 			  <CssBaseline />
@@ -97,7 +211,7 @@ class Climate extends React.Component {
 					  id="city"
 					  label="City"
 					  name="city"
-					  autoComplete="email"
+					  onChange={handleCityChange}
 					  autoFocus
 					/>
 					<TextField
@@ -105,32 +219,87 @@ class Climate extends React.Component {
 					  margin="normal"
 					  required
 					  fullWidth
-					  name="date"
-					  label="Date"
-					  type="date"
-					  defaultValue="2021-04-25"
-					  id="date"
-					  autoComplete="date"
+					  name="state"
+					  label="State"
+					  type="state"
+					  id="state"
+					  onChange={handleStateChange}
 					/>
 					<Button
-					  type="submit"
 					  fullWidth
 					  variant="contained"
 					  color="primary"
 					  className={classes.submit}
+					  onClick={this.getClimateResult}
 					>
 					  City Overview
 					</Button>
-				  	<Result />
+				  	<Result data={this.state.climateR}/>
 				  </form>
 				</div>
 			  </Grid>
 			  <Grid item xs={12} className={classes.rainImg} />
 			  <Grid item xs={6} component={Paper} elevation={6} square>
-			  	<PrecipitationResult />
+			  	<form className={classes.form1} noValidate>
+					<TextField
+					  variant="outlined"
+					  margin="normal"
+					  required
+					  id="month"
+					  label="Month"
+					  name="month"
+					  onChange={handlePrecMonthChange}
+					/>
+					<TextField
+					  variant="outlined"
+					  margin="normal"
+					  required
+					  name="year"
+					  label="Year"
+					  type="year"
+					  id="year"
+					  onChange={handlePrecYearChange}
+					/>
+					<Button
+					  variant="contained"
+					  color="primary"
+					  onClick={this.getPrecResult}
+					>
+					  Query
+					</Button>
+				  	<PrecipitationResult data={this.state.precR}/>
+				</form>
 			  </Grid>
 			  <Grid item xs={6} component={Paper} elevation={6} square>
-			  	<TemperatureDiffResult />
+			  	<form className={classes.form1} noValidate>
+					<TextField
+					  variant="outlined"
+					  margin="normal"
+					  required
+					  id="month"
+					  label="Month"
+					  name="month"
+					  onChange={handleTempMonthChange}
+					/>
+					<TextField
+					  variant="outlined"
+					  margin="normal"
+					  required
+					  name="year"
+					  label="Year"
+					  type="year"
+					  id="year"
+					  onChange={handleTempYearChange}
+					/>
+					<Button
+					  variant="contained"
+					  color="primary"
+					  onClick={this.getTempResult}
+					>
+					  Query
+					</Button>
+			  		<TemperatureDiffResult data={this.state.tempR}/>
+			  	</form>
 			  </Grid>
 			  <Grid item xs={12}>
 			  	<Box mt={4}>
