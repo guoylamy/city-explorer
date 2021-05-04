@@ -176,6 +176,57 @@ const getTop10Museum = (req, res) => {
   });
 };
 
+// CREATE VIEW date_section AS (
+//   SELECT min(date_record) AS min_date, max(date_record) as max_date
+//   FROM climate_prcp_not_null 
+//   GROUP BY file_name);
+/* ---- climate basic info: year ---- */
+const getyear = (req, res) => {
+    var query = `
+    SELECT distinct year(date_record) AS year
+    FROM climate_prcp_not_null
+    WHERE date_record >= ALL(SELECT max(min_date) FROM date_section)
+    AND date_record <= ALL(SELECT min(max_date) FROM date_section)
+    ORDER BY year;
+    `;
+    connection.query(query, function(err, rows, fields) {
+      if (err) console.log(err);
+      else {
+        res.json(rows);
+      }
+    });
+}
+/* ---- climate basic info: month ---- */
+const getmonth = (req, res) => {
+  var query = `
+  SELECT distinct month(date_record) AS month
+  FROM climate_prcp_not_null
+  WHERE date_record >= ALL(SELECT max(min_date) FROM date_section)
+    AND date_record <= ALL(SELECT min(max_date) FROM date_section)
+  ORDER BY month;
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+}
+
+//with view state_city_file
+/* ---- climate basic info: plafe(state, city) ---- */
+const getPlace = (req, res) => {
+  var query = `
+  SELECT state_name as state, city_name as city
+  FROM state_city_file;
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+}
 
 /* ---- cilmate-time  (1. Top 10 states with smallest average daily temperature difference) ---- */
 const getTop10TempDiff = (req, res) => {
@@ -385,6 +436,9 @@ module.exports = {
   getTop10routes: getTop10routes,
   getTop1Seasonroutes: getTop1Seasonroutes,
   getMonthRouteNum: getMonthRouteNum,
+  getyear: getyear,
+  getmonth, getmonth,
+  getPlace: getPlace,
   getStateTmax: getStateTmax,
   getTop10Museum: getTop10Museum,
   getTop10TempDiff: getTop10TempDiff,

@@ -21,6 +21,9 @@ app.get('/home/monthly_route_num', routes.getMonthRouteNum);
 app.get('/home/state_tmax', routes.getStateTmax);
 app.get('/home/museum', routes.getTop10Museum);
 /* ---- climate ---- */
+app.get('/climate/getyear', routes.getyear);
+app.get('/climate/getmonth', routes.getmonth);
+app.get('/climate/getPlace', routes.getPlace); //{state:XX, city:XX}
 app.get('/climate/time/temp_diff/:year/:month', routes.getTop10TempDiff);
 app.get('/climate/time/prcp/:year/:month', routes.getTop10Prcp);
 app.get('/climate/city/monthly_climate/:city/:state', routes.getCityMonthlyClimate);
