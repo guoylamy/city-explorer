@@ -13,6 +13,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Result from './ClimateResult/Result';
 import PrecipitationResult from './ClimateResult/PrecipitationResult';
 import TemperatureDiffResult from './ClimateResult/TemperatureDiffResult';
+import WeatherCard from './ClimateResult/WeatherCard';
+import { CardColumns } from "react-bootstrap";
 
 function Copyright() {
   return (
@@ -74,6 +76,9 @@ const useStyles = theme => ({
     overflow: 'auto',
     flexDirection: 'row',
   },
+  singleWeatherCard: {
+	display: 'table',
+  }
 });
 
 class Climate extends React.Component {
@@ -86,15 +91,22 @@ class Climate extends React.Component {
 			precMonth:"",
 			tempYear:"",
 			tempMonth:"",
+			forecastCity:"",
+			displayForecastCity:"",
 			climateR: [],
 			precR: [],
-			tempR: []
+			tempR: [],
+			weatherapiKey: "182d6cd6eca58af2af3d43c704b7657b",
+			forecastData: [],
+			forecastDailyData: []
 		};
 
 		this.getClimateResult = this.getClimateResult.bind(this);
 		this.getPrecResult = this.getPrecResult.bind(this);
 		this.getTempResult = this.getTempResult.bind(this);
+		this.getWeatherForcast = this.getWeatherForcast.bind(this);
 	}
+
 	getClimateResult (){
 		fetch("http://localhost:8081/climate/city/monthly_climate/"+this.state.climateCity+"/"+this.state.climateState,{
 		  method: "GET"
@@ -158,6 +170,35 @@ class Climate extends React.Component {
 		  console.log(err);
 		});
 	}
+
+	getWeatherForcast() {
+		fetch("http://api.openweathermap.org/data/2.5/forecast?q="+this.state.forecastCity + "&appid=" + this.state.weatherapiKey,{
+			method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(data => 
+			{
+				const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
+			    this.setState({
+				    forecastData: data.list,
+					forecastDailyData: dailyData
+			    })
+		    }
+		  )
+		this.setState({
+			displayForecastCity: this.state.forecastCity
+		})
+	}
+
+	forecastDailyWeatherCards = () => {
+		console.log(this.state.forecastDailyData);
+		return this.state.forecastDailyData.map((data, index) => <WeatherCard data={data} key={index} />)
+	}
+
 	render() {
 		const { classes } = this.props;
 		const handleCityChange = (e) => {
@@ -190,6 +231,13 @@ class Climate extends React.Component {
 				tempMonth: e.target.value
 			});
 		};
+
+		const handleWeatherForecastState = (e) => {
+			this.setState({
+				forecastCity: e.target.value
+			});
+		};
+
 		return (
 			<Grid container component="main" className={classes.root}>
 			  <CssBaseline />
@@ -301,6 +349,34 @@ class Climate extends React.Component {
 			  		<TemperatureDiffResult data={this.state.tempR}/>
 			  	</form>
 			  </Grid>
+			  <Grid item xs = {12} component={Paper} elevation={12} square>
+			    <form className={classes.form1} noValidate>
+			        <TextField
+					  variant="outlined"
+					  margin="normal"
+					  required
+					  name="city"
+					  label="city"
+					  id="forecastcity"
+					  onChange={handleWeatherForecastState}
+					/>
+					<Button
+					  variant="contained"
+					  color="primary"
+					  onClick={this.getWeatherForcast}
+					>
+						Search
+					</Button>
+				</form>
+				<div>
+                    <h1 className="weather forecast title">5-Day Forecast</h1>
+                    <h5 className="display weather forecast city">{this.state.displayForecastCity}</h5>
+					<div class="singleWeatherCard">
+                        {this.forecastDailyWeatherCards()}
+					</div>
+                </div>
+			  </Grid>
+
 			  <Grid item xs={12}>
 			  	<Box mt={4}>
 					<Copyright />
