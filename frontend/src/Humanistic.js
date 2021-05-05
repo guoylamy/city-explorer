@@ -55,6 +55,75 @@ const useStyles = theme => ({
 });
 
 class Humanistic extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+		  museumRow: [],
+		  employRow: [],
+		  incomeRow: []
+		};
+	}
+	componentDidMount() {
+		fetch("http://localhost:8081/humanistic/museum_info",{
+		  method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(museum_l => {
+		  if (!museum_l) return;
+		  museum_l = Array.from(museum_l);
+
+		  this.setState({
+		    museumRow: museum_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+
+		fetch("http://localhost:8081/humanistic/employ_info",{
+		  method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(employ_l => {
+		  if (!employ_l) return;
+		  employ_l = Array.from(employ_l);
+
+		  this.setState({
+		    employRow: employ_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+
+		fetch("http://localhost:8081/humanistic/income_info",{
+		  method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(income_l => {
+		  if (!income_l) return;
+		  income_l = Array.from(income_l);
+
+		  this.setState({
+		    incomeRow: income_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	}
 	render() {
 		const { classes } = this.props;
 		return (
@@ -66,7 +135,7 @@ class Humanistic extends React.Component {
 				  <Typography component="h1" variant="h5">
 					Museum
 				  </Typography>
-				  <MuseumResult />
+				  <MuseumResult data={this.state.museumRow}/>
 				</div>
 			  </Grid>
 			  <Grid item xs={12} className={classes.space} />
@@ -75,7 +144,7 @@ class Humanistic extends React.Component {
 				  <Typography component="h1" variant="h5">
 					Employment
 				  </Typography>
-				  <EmployInfo />
+				  <EmployInfo data={this.state.employRow}/>
 				</div>
 			  </Grid>
 			  <Grid item xs={false} sm={4} md={4} className={classes.employImg} />
@@ -86,7 +155,7 @@ class Humanistic extends React.Component {
 				  <Typography component="h1" variant="h5">
 					Income
 				  </Typography>
-				  <IncomeInfo />
+				  <IncomeInfo data={this.state.incomeRow}/>
 				</div>
 			  </Grid>
 			</Grid>
