@@ -14,6 +14,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Result from './ClimateResult/Result';
 import PrecipitationResult from './ClimateResult/PrecipitationResult';
 import TemperatureDiffResult from './ClimateResult/TemperatureDiffResult';
+import WeatherCard from './ClimateResult/WeatherCard';
+import { CardColumns } from "react-bootstrap";
+import { grey } from '@material-ui/core/colors';
 
 function Copyright() {
   return (
@@ -75,8 +78,13 @@ const useStyles = theme => ({
 	overflow: 'auto',
 	flexDirection: 'row',
   },
+  singleWeatherCard: {
+	display: 'flex',
+	justifyContent: 'space-around',
+	backgroundColor: "#DCDBDC",
+	boxSizing: "border-box",
+  },
   slide: {
-
   }
 });
 
@@ -90,9 +98,15 @@ class Climate extends React.Component {
 			precMonth:"",
 			tempYear:"",
 			tempMonth:"",
+			forecastCity:"",
+			forecastZip:"",
+			displayForecastCity:"",
 			climateR: [],
 			precR: [],
 			tempR: [],
+			weatherapiKey: "182d6cd6eca58af2af3d43c704b7657b",
+			forecastData: [],
+			forecastDailyData: [],
 			year: [],
 			month: [],
 			position: []
@@ -101,7 +115,10 @@ class Climate extends React.Component {
 		this.getClimateResult = this.getClimateResult.bind(this);
 		this.getPrecResult = this.getPrecResult.bind(this);
 		this.getTempResult = this.getTempResult.bind(this);
+		this.getWeatherForcast = this.getWeatherForcast.bind(this);
+		this.getWeatherForecastbyZip = this.getWeatherForecastbyZip.bind(this);
 	}
+
 	getClimateResult (){
 		fetch("http://localhost:8081/climate/city/monthly_climate/"+this.state.climateCity+"/"+this.state.climateState,{
 		  method: "GET"
@@ -224,6 +241,58 @@ class Climate extends React.Component {
 		  console.log(err);
 		});
 	}
+
+	getWeatherForcast() {
+		fetch("http://api.openweathermap.org/data/2.5/forecast?q="+this.state.forecastCity + "&appid=" + this.state.weatherapiKey,{
+			method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(data => 
+			{
+				const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
+			    this.setState({
+				    forecastData: data.list,
+					forecastDailyData: dailyData
+			    })
+		    }
+		  )
+		this.setState({
+			displayForecastCity: this.state.forecastCity
+		})
+	}
+
+	getWeatherForecastbyZip() {
+		fetch("http://api.openweathermap.org/data/2.5/forecast?zip="+this.state.forecastZip + ",us&appid=" + this.state.weatherapiKey,{
+			method: "GET"
+		})
+		.then(res => {
+		    return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(data => 
+			{
+				const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
+			    this.setState({
+				    forecastData: data.list,
+					forecastDailyData: dailyData
+			    })
+		    }
+		  )
+		this.setState({
+			displayForecastCity: this.state.forecastZip
+		})
+	}
+
+	forecastDailyWeatherCards = () => {
+		console.log(this.state.forecastDailyData);
+		return this.state.forecastDailyData.map((data, index) => <WeatherCard data={data} key={index} />)
+	}
+
 	render() {
 		const { classes } = this.props;
 		const handleCityChange = (e) => {
@@ -256,6 +325,19 @@ class Climate extends React.Component {
 				tempMonth: e.target.value
 			});
 		};
+
+		const handleWeatherForecastState = (e) => {
+			this.setState({
+				forecastCity: e.target.value
+			});
+		};
+
+		const handleWeatherForecastZip = (e) => {
+			this.setState({
+				forecastZip: e.target.value
+			})
+		}
+
 		return (
 			<Grid container component="main" className={classes.root}>
 			  <CssBaseline />
@@ -408,6 +490,51 @@ class Climate extends React.Component {
 					<TemperatureDiffResult data={this.state.tempR}/>
 				</form>
 			  </Grid>
+			  <Grid item xs = {12} component={Paper} elevation={12} square>
+			    <form className={classes.form1} noValidate>
+			        <TextField
+					  variant="outlined"
+					  margin="normal"
+					  required
+					  name="city"
+					  label="city"
+					  id="forecastcity"
+					  onChange={handleWeatherForecastState}
+					/>
+					<Button
+					  variant="contained"
+					  color="primary"
+					  onClick={this.getWeatherForcast}
+					>
+						Search
+					</Button>
+					<TextField
+					  variant="outlined"
+					  margin="normal"
+					  required
+					  name="zip"
+					  label="zip"
+					  id="forecastzip"
+					  onChange={handleWeatherForecastZip}
+					/>
+					<Button
+					  variant="contained"
+					  color="primary"
+					  onClick={this.getWeatherForecastbyZip}
+					>
+						Search
+					</Button>
+				</form>
+			        
+				<div className="weatherForecastData">
+                    <h1 className="weatherForecastTitle">5-Day Forecast</h1>
+                    <h5 className="displayWeatherForecastCity">{this.state.displayForecastCity}</h5>
+					<div className={classes.singleWeatherCard}>
+                        {this.forecastDailyWeatherCards()}
+					</div>
+                </div>
+			  </Grid>
+
 			  <Grid item xs={12}>
 				<Box mt={4}>
 					<Copyright />
