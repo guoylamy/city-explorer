@@ -4,13 +4,19 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import MuseumResult from './HumanisticResult/MuseumResult';
 import EmployInfo from './HumanisticResult/EmployInfo';
 import IncomeInfo from './HumanisticResult/IncomeInfo';
+import StateMuseumRes from './HumanisticResult/StateMuseumRes';
+import StateCollegeRes from './HumanisticResult/StateCollegeRes';
+import StateBasicRes from './HumanisticResult/StateBasicRes';
 
 const useStyles = theme => ({
   root: {
-	height: '210vh',
+	height: '260vh',
   },
   image: {
 	backgroundImage: 'url(https://images.unsplash.com/photo-1560425946-7d5830202765?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzZ8fG11c2V1bXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60)',
@@ -58,10 +64,77 @@ class Humanistic extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-		  museumRow: [],
-		  employRow: [],
-		  incomeRow: []
+			selectedState: "",
+			museumRow: [],
+			employRow: [],
+			incomeRow: [],
+			museumResult: [],
+			collegeResult: [],
+			basicsResult: [],
+			position: []
 		};
+		this.getInfo = this.getInfo.bind(this);
+	}
+	getInfo (){
+		fetch("http://localhost:8081/humanistic/state/museum/"+this.state.selectedState,{
+		  method: "GET"
+		})
+		.then(res => {
+			return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(res_l => {
+		  if (!res_l) return;
+		  res_l = Array.from(res_l);
+
+		  this.setState({
+			museumResult: res_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	
+		fetch("http://localhost:8081/humanistic/state/college/"+this.state.selectedState,{
+		  method: "GET"
+		})
+		.then(res => {
+			return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(res_l => {
+		  if (!res_l) return;
+		  res_l = Array.from(res_l);
+
+		  this.setState({
+			collegeResult: res_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	
+		fetch("http://localhost:8081/humanistic/state/basics/"+this.state.selectedState,{
+		  method: "GET"
+		})
+		.then(res => {
+			return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(res_l => {
+		  if (!res_l) return;
+		  res_l = Array.from(res_l);
+
+		  this.setState({
+			basicsResult: res_l
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
 	}
 	componentDidMount() {
 		fetch("http://localhost:8081/humanistic/museum_info",{
@@ -123,9 +196,34 @@ class Humanistic extends React.Component {
 		  // Print the error if there is one.
 		  console.log(err);
 		});
+
+		fetch("http://localhost:8081/climate/getPlace",{
+		  method: "GET"
+		})
+		.then(res => {
+			return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(place => {
+		  if (!place) return;
+		  place = Array.from(place);
+
+		  this.setState({
+			position: place
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
 	}
 	render() {
 		const { classes } = this.props;
+		const handleStateChange = (e) => {
+			this.setState({
+				selectedState: e.target.value
+			});
+		};
 		return (
 			<Grid container component="main" className={classes.root}>
 			  <CssBaseline />
@@ -157,6 +255,37 @@ class Humanistic extends React.Component {
 				  </Typography>
 				  <IncomeInfo data={this.state.incomeRow}/>
 				</div>
+			  </Grid>
+			  <Grid item xs={12} component={Paper} elevation={6} square>
+			  	<div className={classes.paper}>
+			  		<TextField
+					  variant="outlined"
+					  margin="normal"
+					  select
+					  required
+					  name="state"
+					  label="State"
+					  type="state"
+					  id="state"
+					  onChange={handleStateChange}
+					>
+						{this.state.position.map((option) => (
+							<MenuItem key={option.state} value={option.state}>
+								{option.state}
+							</MenuItem>
+						))}
+					</TextField>
+					<Button
+					  variant="contained"
+					  color="primary"
+					  onClick={this.getInfo}
+					>
+					  Query
+					</Button>
+			  		<StateMuseumRes data={this.state.museumResult}/>
+			  		<StateCollegeRes data={this.state.collegeResult}/>
+			  		<StateBasicRes data={this.state.basicsResult}/>
+			  	</div>
 			  </Grid>
 			</Grid>
 		);
