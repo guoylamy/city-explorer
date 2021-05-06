@@ -295,8 +295,8 @@ class Climate extends React.Component {
 		return this.state.forecastDailyData.map((data, index) => <WeatherCard data={data} key={index} />)
 	}
 
-	getRelatedCity() {
-		fetch("http://localhost:8081/getcity/" + this.state.climateState,{
+	getRelatedCity(value) {
+		fetch("http://localhost:8081/getcity/" + value,{
 		  method: "GET"
 		})
 		.then(res => {
@@ -328,7 +328,7 @@ class Climate extends React.Component {
 			this.setState({
 				climateState: e.target.value
 			});
-			this.getRelatedCity();
+			this.getRelatedCity(e.target.value);
 		};
 		const handlePrecYearChange = (e) => {
 			this.setState({
