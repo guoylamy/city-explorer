@@ -109,7 +109,8 @@ class Climate extends React.Component {
 			forecastDailyData: [],
 			year: [],
 			month: [],
-			position: []
+			position: [],
+			city_position: []
 		};
 
 		this.getClimateResult = this.getClimateResult.bind(this);
@@ -117,6 +118,7 @@ class Climate extends React.Component {
 		this.getTempResult = this.getTempResult.bind(this);
 		this.getWeatherForcast = this.getWeatherForcast.bind(this);
 		this.getWeatherForecastbyZip = this.getWeatherForecastbyZip.bind(this);
+		this.getRelatedCity = this.getRelatedCity.bind(this);
 	}
 
 	getClimateResult (){
@@ -221,7 +223,7 @@ class Climate extends React.Component {
 		  // Print the error if there is one.
 		  console.log(err);
 		});
-		fetch("http://localhost:8081/climate/getPlace",{
+		fetch("http://localhost:8081/getstate",{
 		  method: "GET"
 		})
 		.then(res => {
@@ -293,6 +295,28 @@ class Climate extends React.Component {
 		return this.state.forecastDailyData.map((data, index) => <WeatherCard data={data} key={index} />)
 	}
 
+	getRelatedCity() {
+		fetch("http://localhost:8081/getcity/" + this.state.climateState,{
+		  method: "GET"
+		})
+		.then(res => {
+			return res.json();
+		}, err => {
+		  console.log(err);
+		})
+		.then(place => {
+		  if (!place) return;
+		  place = Array.from(place);
+
+		  this.setState({
+			city_position: place
+		  });
+		}, err => {
+		  // Print the error if there is one.
+		  console.log(err);
+		});
+	}
+
 	render() {
 		const { classes } = this.props;
 		const handleCityChange = (e) => {
@@ -304,6 +328,7 @@ class Climate extends React.Component {
 			this.setState({
 				climateState: e.target.value
 			});
+			this.getRelatedCity();
 		};
 		const handlePrecYearChange = (e) => {
 			this.setState({
@@ -357,24 +382,6 @@ class Climate extends React.Component {
 					  select
 					  required
 					  fullWidth
-					  id="city"
-					  label="City"
-					  name="city"
-					  onChange={handleCityChange}
-					  autoFocus
-					>
-						{this.state.position.map((option) => (
-							<MenuItem key={option.city} value={option.city}>
-								{option.city}
-							</MenuItem>
-						))}
-					</TextField>
-					<TextField
-					  variant="outlined"
-					  margin="normal"
-					  select
-					  required
-					  fullWidth
 					  name="state"
 					  label="State"
 					  type="state"
@@ -384,6 +391,24 @@ class Climate extends React.Component {
 						{this.state.position.map((option) => (
 							<MenuItem key={option.state} value={option.state}>
 								{option.state}
+							</MenuItem>
+						))}
+					</TextField>
+					<TextField
+					  variant="outlined"
+					  margin="normal"
+					  select
+					  required
+					  fullWidth
+					  id="city"
+					  label="City"
+					  name="city"
+					  onChange={handleCityChange}
+					  autoFocus
+					>
+						{this.state.city_position.map((option) => (
+							<MenuItem key={option.city} value={option.city}>
+								{option.city}
 							</MenuItem>
 						))}
 					</TextField>
