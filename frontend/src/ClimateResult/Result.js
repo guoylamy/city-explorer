@@ -8,30 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-function fetchData(){
-  fetch("http://localhost:8081/humanistic/mus",{
-    method: "GET"
-  })
-  .then(res => {
-      return res.json();
-  }, err => {
-    console.log(err);
-  })
-  .then(museum_l => {
-    if (!museum_l) return;
-    const museum_item = museum_l.map((results, i) =>
-      <option key={i} className="decadesOption" value={results.decade}>{results.decade}</option>
-    );
-
-    this.setState({
-      rows: museum_item
-    });
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  });
-}
-
 function preventDefault(event) {
   event.preventDefault();
 }
