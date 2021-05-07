@@ -90,7 +90,7 @@ const useStyles = theme => ({
   	marginLeft:theme.spacing(2),
   },
   firstBox: {
-  	marginLeft:theme.spacing(37),
+  	marginLeft:theme.spacing(28),
   }
 });
 
