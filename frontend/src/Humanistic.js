@@ -299,16 +299,18 @@ class Humanistic extends React.Component {
 						</queryBox>
 					</searchBox>
 					<form2 className={classes.form2} noValidate>
-					<Grid item xs={4} component={Paper}>
-				  		<StateMuseumRes data={this.state.museumResult}/>
-				  	</Grid>
-				  	<Grid item xs={4} component={Paper}>
-				  		<StateCollegeRes data={this.state.collegeResult}/>
-				  	</Grid>
-				  	<Grid item xs={4} component={Paper}>
-				  		<StateBasicRes data={this.state.basicsResult}/>
-				  	</Grid>
-				  	</form2>
+						<Grid container spacing={3}>
+						<Grid item xs={5} component={Paper} elevation={5}>
+					  		<StateMuseumRes data={this.state.museumResult}/>
+					  	</Grid>
+					  	<Grid item xs={3} component={Paper} elevation={3}>
+					  		<StateCollegeRes data={this.state.collegeResult}/>
+					  	</Grid>
+					  	<Grid item xs={4} component={Paper} elevation={4}>
+					  		<StateBasicRes data={this.state.basicsResult}/>
+					  	</Grid>
+					  	</Grid>
+					</form2>
 			  	</div>
 			  </Grid>
 			</Grid>
