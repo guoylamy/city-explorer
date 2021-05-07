@@ -247,22 +247,34 @@ class Climate extends React.Component {
 			method: "GET"
 		})
 		.then(res => {
-		    return res.json();
+            if (res.status > 400) {
+				return null;
+			} else {
+				return res.json();
+			}
 		}, err => {
-		  console.log(err);
+		  console.log("error", err);
+		  return null;
 		})
 		.then(data => 
 			{
-				const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
-			    this.setState({
-				    forecastData: data.list,
-					forecastDailyData: dailyData
-			    })
+				if (data == null){
+					this.setState({
+						displayForecastCity: "Could not find that City!",
+						forecastData: [],
+						forecastDailyData: [],
+					})
+				} else {
+					const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
+			        this.setState({
+				        forecastData: data.list,
+    					forecastDailyData: dailyData,
+						displayForecastCity: this.state.forecastCity	
+	    		    })
+				}
+				
 		    }
 		  )
-		this.setState({
-			displayForecastCity: this.state.forecastCity
-		})
 	}
 
 	getWeatherForecastbyZip() {
@@ -270,22 +282,33 @@ class Climate extends React.Component {
 			method: "GET"
 		})
 		.then(res => {
-		    return res.json();
+		    if (res.status > 400) {
+				return null;
+			} else {
+				return res.json();
+			}
 		}, err => {
-		  console.log(err);
+		  console.log("error", err);
+		  return null;
 		})
 		.then(data => 
 			{
-				const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
-			    this.setState({
-				    forecastData: data.list,
-					forecastDailyData: dailyData
-			    })
+				if (data == null){
+					this.setState({
+						displayForecastCity: "Could not find that Zip!",
+						forecastData: [],
+						forecastDailyData: [],
+					})
+				} else {
+					const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
+					this.setState({
+						forecastData: data.list,
+						forecastDailyData: dailyData,
+						displayForecastCity: this.state.forecastZip
+					})
+				}				
 		    }
 		  )
-		this.setState({
-			displayForecastCity: this.state.forecastZip
-		})
 	}
 
 	forecastDailyWeatherCards = () => {
