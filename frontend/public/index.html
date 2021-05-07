@@ -25,7 +25,18 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>City Explorer</title>
+
+    <title>Google Auth</title>
+    <meta name="google-signin-client_id" content="771294980205-jn70rv34nuoheubtolvc7pn42sdhtj56.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- <script>
+      gapi.load('auth2', function() {
+        /* Ready. Make a call to gapi.auth2.init or some other API */
+        gapi.auth2.init();
+      });
+    </script> -->
   </head>
+
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     
@@ -68,6 +79,14 @@
         });
       }
 
+      function onFacebookLogout() {
+        FB.logout(function(response) {
+        console.log(response);
+        console.log("Person is now logged out");
+        });
+      }
+
+
       window.fbAsyncInit = function() {
         FB.init({
           appId            : '555054618814288',
@@ -108,5 +127,18 @@
     <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
     </fb:login-button>
     <div id="root"></div>
+    <div class="g-signin2" data-onsuccess="onSignIn" ></div>
   </body>
+
+  <script>
+    function onSignIn(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+      }
+    </script>
+
+  
 </html>
