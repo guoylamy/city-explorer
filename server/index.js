@@ -20,6 +20,8 @@ app.get('/home/seasonal_route', routes.getTop1Seasonroutes);
 app.get('/home/monthly_route_num', routes.getMonthRouteNum);
 app.get('/home/state_tmax', routes.getStateTmax);
 app.get('/home/museum', routes.getTop10Museum);
+app.get('/getState', routes.getState);
+app.get('/getCity/:state', routes.getCitybyState);
 /* ---- climate ---- */
 app.get('/climate/getyear', routes.getyear);
 app.get('/climate/getmonth', routes.getmonth);

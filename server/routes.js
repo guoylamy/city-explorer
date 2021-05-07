@@ -228,6 +228,36 @@ const getPlace = (req, res) => {
   });
 }
 
+const getState = (req, res) => {
+  var query = `
+  SELECT distinct state_name as state
+  FROM state_city_file
+  ORDER BY state_name;
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+}
+
+const getCitybyState = (req, res) => {
+  var inputState = req.params.state;
+  var query = `
+  SELECT distinct city_name as city
+  FROM state_city_file
+  WHERE state_name = "${inputState}"
+  ORDER BY city;
+  `;
+  connection.query(query, function(err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+}
+
 /* ---- cilmate-time  (1. Top 10 states with smallest average daily temperature difference) ---- */
 const getTop10TempDiff = (req, res) => {
   var inputYear = req.params.year;
@@ -439,6 +469,8 @@ module.exports = {
   getyear: getyear,
   getmonth, getmonth,
   getPlace: getPlace,
+  getState: getState,
+  getCitybyState: getCitybyState,
   getStateTmax: getStateTmax,
   getTop10Museum: getTop10Museum,
   getTop10TempDiff: getTop10TempDiff,

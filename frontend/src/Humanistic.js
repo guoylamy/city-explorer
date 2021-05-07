@@ -197,7 +197,7 @@ class Humanistic extends React.Component {
 		  console.log(err);
 		});
 
-		fetch("http://localhost:8081/climate/getPlace",{
+		fetch("http://localhost:8081/getstate",{
 		  method: "GET"
 		})
 		.then(res => {
