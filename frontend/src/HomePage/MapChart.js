@@ -46,7 +46,7 @@ const MapChart = (props) => {
       <text
         textAnchor="middle"
         y={markerOffset}
-        style={{ fontFamily: "system-ui", fill: "#5D5A6D" }}
+        style={{ fontFamily: "system-ui", fill: "#5D5A6D", fontSize: 'small' }}
       >
         {name}
       </text>
