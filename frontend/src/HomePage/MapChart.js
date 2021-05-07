@@ -11,6 +11,7 @@ import {
 import allStates from "./allStates.json";
 import { popular_city, popular_flights, popular_museum } from './data';
 
+
 const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
 const offsets = {
@@ -26,12 +27,9 @@ const offsets = {
 };
 
 const MapChart = (props) => {
-  const markers = popular_city.map(({city, latitude, longitude}) => { 
-    return { markerOffset: 15, name: city,  coordinates: [longitude, latitude]}
-  });
-  const states = new Set(popular_city.map(({state}) => state));
-  console.log(states);
-
+  const markers = props.markers;
+  console.log('markers:', markers);
+  
   const m = markers.map(({ name, coordinates, markerOffset }) => (
     <Marker key={name} coordinates={coordinates}>
       <g
@@ -67,49 +65,10 @@ const MapChart = (props) => {
                 fill="#DDD"
               />)
             )}
-            {/* {geographies.map(geo => {
-              const centroid = geoCentroid(geo);
-              const cur = allStates.find(s => s.val === geo.id);
-              return (
-                <g key={geo.rsmKey + "-name"}>
-                  {cur &&
-                    centroid[0] > -160 &&
-                    centroid[0] < -67 &&
-                    (Object.keys(offsets).indexOf(cur.id) === -1 ? (
-                      <Marker coordinates={centroid}>
-                        <text y="2" fontSize={14} textAnchor="middle">
-                          {cur.id}
-                        </text>
-                      </Marker>
-                    ) : (
-                      <Annotation
-                        subject={centroid}
-                        dx={offsets[cur.id][0]}
-                        dy={offsets[cur.id][1]}
-                      >
-                        <text x={4} fontSize={14} alignmentBaseline="middle">
-                          {cur.id}
-                        </text>
-                      </Annotation>
-                    ))}
-                </g>
-              );
-            })} */}
           </>
         )}
       </Geographies>
-          {/* {markers.map(({ coordinates }) => {
-            console.log(coordinates);
-            return (
-              <Marker coordinates={coordinates}>
-              <circle r={8} fill="#F53" />
-              </Marker>
-            )
-          })} */}
       {m}
-      {/* <Marker coordinates={[-87.6862, 41.8373]}>
-        <circle r={8} fill="#F53" />
-      </Marker> */}
     </ComposableMap>
   );
 };
