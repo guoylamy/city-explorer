@@ -27,7 +27,7 @@ const useStyles = theme => ({
 	backgroundPosition: 'center',
   },
   paper: {
-	margin: theme.spacing(8, 4),
+	margin: theme.spacing(8, 1.5),
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
@@ -300,13 +300,14 @@ class Humanistic extends React.Component {
 					</searchBox>
 					<form2 className={classes.form2} noValidate>
 						<Grid container spacing={3}>
-						<Grid item xs={5} component={Paper} elevation={5}>
-					  		<StateMuseumRes data={this.state.museumResult}/>
-					  	</Grid>
-					  	<Grid item xs={3} component={Paper} elevation={3}>
+						<Grid item xs={2} component={Paper} elevation={6}>
 					  		<StateCollegeRes data={this.state.collegeResult}/>
 					  	</Grid>
-					  	<Grid item xs={4} component={Paper} elevation={4}>
+						<Grid item xs={5} component={Paper} elevation={8}>
+					  		<StateMuseumRes data={this.state.museumResult}/>
+					  	</Grid>
+					  	
+					  	<Grid item xs={5} component={Paper} elevation={5}>
 					  		<StateBasicRes data={this.state.basicsResult}/>
 					  	</Grid>
 					  	</Grid>
