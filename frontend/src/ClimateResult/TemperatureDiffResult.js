@@ -14,15 +14,13 @@ export default function TemperatureDiffResult(row) {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
             <TableCell>State</TableCell>
-            <TableCell align="right">Temperature</TableCell>
+            <TableCell align="right">Temperature(˚F)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
               <TableCell>{row.state}</TableCell>
               <TableCell align="right">{row.temp}</TableCell>
             </TableRow>

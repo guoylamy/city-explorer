@@ -15,15 +15,13 @@ export default function PrecipitationResult(row) {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
             <TableCell>State</TableCell>
-            <TableCell align="right">Precipitation</TableCell>
+            <TableCell align="right">Precipitation(Unit: in)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
               <TableCell>{row.state_name}</TableCell>
               <TableCell align="right">{row.cnt}</TableCell>
             </TableRow>

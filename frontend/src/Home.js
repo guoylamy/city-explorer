@@ -1,13 +1,13 @@
 import React from 'react';
 import HomePageTabs from './HomePage/HomePageTabs';
-import MapChart from './HomePage/MapChart';
-import TestMap from './HomePage/TestMap';
+import HomePageCharts from './HomePage/HomePageCharts';
 
 class Home extends React.Component {
     render() {
         return (
             <div>
               <HomePageTabs/>
+              <HomePageCharts/>
             </div>
         );
     }

@@ -17,8 +17,7 @@ export default function Result(row) {
             <TableCell>Museum Name</TableCell>
             <TableCell>City</TableCell>
             <TableCell>Address</TableCell>
-            <TableCell>Length_of_visit</TableCell>
-            <TableCell>Fee</TableCell>
+            <TableCell>Length of visit</TableCell>
             <TableCell align="right">Phone</TableCell>
           </TableRow>
         </TableHead>
@@ -29,7 +28,6 @@ export default function Result(row) {
               <TableCell>{row.city}</TableCell>
               <TableCell>{row.address}</TableCell>
               <TableCell>{row.length_of_visit}</TableCell>
-              <TableCell>{row.fee}</TableCell>
               <TableCell align="right">{row.phone}</TableCell>
             </TableRow>
           ))}

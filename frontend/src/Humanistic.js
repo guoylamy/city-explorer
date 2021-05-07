@@ -27,7 +27,7 @@ const useStyles = theme => ({
 	backgroundPosition: 'center',
   },
   paper: {
-	margin: theme.spacing(8, 4),
+	margin: theme.spacing(8, 1.5),
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
@@ -57,7 +57,20 @@ const useStyles = theme => ({
 	  theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
 	backgroundSize: 'cover',
 	backgroundPosition: 'center',
-  }
+  },
+  searchBox:{
+  	margin: theme.spacing(1),
+  	display: 'flex',
+  	alignItems: 'center',
+  },
+  queryBox:{
+  	marginLeft: theme.spacing(1),
+  },
+  form2: {
+	width: '100%', // Fix IE 11 issue.
+	marginTop: theme.spacing(3),
+	flexDirection: 'row',
+  },
 });
 
 class Humanistic extends React.Component {
@@ -197,7 +210,7 @@ class Humanistic extends React.Component {
 		  console.log(err);
 		});
 
-		fetch("http://localhost:8081/climate/getPlace",{
+		fetch("http://localhost:8081/getstate",{
 		  method: "GET"
 		})
 		.then(res => {
@@ -258,33 +271,47 @@ class Humanistic extends React.Component {
 			  </Grid>
 			  <Grid item xs={12} component={Paper} elevation={6} square>
 			  	<div className={classes.paper}>
-			  		<TextField
-					  variant="outlined"
-					  margin="normal"
-					  select
-					  required
-					  name="state"
-					  label="State"
-					  type="state"
-					  id="state"
-					  onChange={handleStateChange}
-					>
-						{this.state.position.map((option) => (
-							<MenuItem key={option.state} value={option.state}>
-								{option.state}
-							</MenuItem>
-						))}
-					</TextField>
-					<Button
-					  variant="contained"
-					  color="primary"
-					  onClick={this.getInfo}
-					>
-					  Query
-					</Button>
-			  		<StateMuseumRes data={this.state.museumResult}/>
-			  		<StateCollegeRes data={this.state.collegeResult}/>
-			  		<StateBasicRes data={this.state.basicsResult}/>
+			  		<searchBox className={classes.searchBox} noValidate>
+				  		<TextField
+						  select
+						  required
+						  name="state"
+						  label="State"
+						  type="state"
+						  id="state"
+						  helperText="Please select state"
+						  onChange={handleStateChange}
+						>
+							{this.state.position.map((option) => (
+								<MenuItem key={option.state} value={option.state}>
+									{option.state}
+								</MenuItem>
+							))}
+						</TextField>
+						<queryBox className={classes.queryBox} noValidate>
+							<Button
+							  variant="contained"
+							  color="primary"
+							  onClick={this.getInfo}
+							>
+							  Query
+							</Button>
+						</queryBox>
+					</searchBox>
+					<form2 className={classes.form2} noValidate>
+						<Grid container spacing={3}>
+						<Grid item xs={2} component={Paper} elevation={6}>
+					  		<StateCollegeRes data={this.state.collegeResult}/>
+					  	</Grid>
+						<Grid item xs={5} component={Paper} elevation={8}>
+					  		<StateMuseumRes data={this.state.museumResult}/>
+					  	</Grid>
+					  	
+					  	<Grid item xs={5} component={Paper} elevation={5}>
+					  		<StateBasicRes data={this.state.basicsResult}/>
+					  	</Grid>
+					  	</Grid>
+					</form2>
 			  	</div>
 			  </Grid>
 			</Grid>
