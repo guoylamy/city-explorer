@@ -45,14 +45,17 @@ connection.query(query, function(err, rows, fields) {
 const getTop10routes = (req, res) => {
   var query = `
   SELECT src_airport, SourceCity, SourceState, src_latitude, src_longitude,
-  dst_airport, DestCity, DestState,latitude AS dst_latitude, longitude AS dst_longitude, passenger_num
+  dst_airport, DestCity, DestState, latitude AS dst_latitude, longitude AS dst_longitude, passenger_num
   FROM
   (SELECT src_airport, SourceCity, SourceState, latitude AS src_latitude, longitude AS src_longitude,
   dst_airport, DestCity,DestState, passenger_num
   FROM(
   SELECT src_airport, a1.city AS SourceCity, a1.state AS SourceState,
   dst_airport, a2.city AS DestCity, a2.state AS DestState, SUM(passengers) AS passenger_num
-  FROM Airplane_Route r JOIN Airport a1 ON r.src_airport = a1.airport_code 
+  FROM Airport a1 JOIN (
+  SELECT src_airport, dst_airport, passengers
+  FROM Airplane_Route)
+  r ON a1.airport_code = r.src_airport
   JOIN Airport a2 ON r.dst_airport = a2.airport_code
   GROUP BY src_airport, dst_airport
   ORDER BY SUM(passengers) DESC
