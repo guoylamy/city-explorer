@@ -68,7 +68,9 @@ const useStyles = theme => ({
 	marginTop: theme.spacing(1),
   },
   form1: {
-	width: '100%', // Fix IE 11 issue.
+  	margin: theme.spacing(1),
+  	alignItems: 'center',
+  	display: 'flex',
   },
   submit: {
 	margin: theme.spacing(3, 0, 15),
@@ -85,7 +87,11 @@ const useStyles = theme => ({
 	backgroundColor: "#DCDBDC",
 	boxSizing: "border-box",
   },
-  slide: {
+  searchBox: {
+  	marginLeft:theme.spacing(2),
+  },
+  firstBox: {
+  	marginLeft:theme.spacing(28),
   }
 });
 
@@ -250,22 +256,34 @@ class Climate extends React.Component {
 			method: "GET"
 		})
 		.then(res => {
-		    return res.json();
+            if (res.status > 400) {
+				return null;
+			} else {
+				return res.json();
+			}
 		}, err => {
-		  console.log(err);
+		  console.log("error", err);
+		  return null;
 		})
 		.then(data => 
 			{
-				const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
-			    this.setState({
-				    forecastData: data.list,
-					forecastDailyData: dailyData
-			    })
+				if (data == null){
+					this.setState({
+						displayForecastCity: "Could not find that City!",
+						forecastData: [],
+						forecastDailyData: [],
+					})
+				} else {
+					const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
+			        this.setState({
+				        forecastData: data.list,
+    					forecastDailyData: dailyData,
+						displayForecastCity: this.state.forecastCity	
+	    		    })
+				}
+				
 		    }
 		  )
-		this.setState({
-			displayForecastCity: this.state.forecastCity
-		})
 	}
 
 	getWeatherForecastbyZip() {
@@ -273,22 +291,33 @@ class Climate extends React.Component {
 			method: "GET"
 		})
 		.then(res => {
-		    return res.json();
+		    if (res.status > 400) {
+				return null;
+			} else {
+				return res.json();
+			}
 		}, err => {
-		  console.log(err);
+		  console.log("error", err);
+		  return null;
 		})
 		.then(data => 
 			{
-				const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
-			    this.setState({
-				    forecastData: data.list,
-					forecastDailyData: dailyData
-			    })
+				if (data == null){
+					this.setState({
+						displayForecastCity: "Could not find that Zip!",
+						forecastData: [],
+						forecastDailyData: [],
+					})
+				} else {
+					const dailyData = data.list.filter(reading => {return reading.dt_txt.includes("00:00:00")})
+					this.setState({
+						forecastData: data.list,
+						forecastDailyData: dailyData,
+						displayForecastCity: this.state.forecastZip
+					})
+				}				
 		    }
 		  )
-		this.setState({
-			displayForecastCity: this.state.forecastZip
-		})
 	}
 
 	forecastDailyWeatherCards = () => {
@@ -428,93 +457,101 @@ class Climate extends React.Component {
 			  </Grid>
 			  <Grid item xs={12} className={classes.rainImg} />
 			  <Grid item xs={6} component={Paper} elevation={6} square>
-				<form className={classes.form1} noValidate>
-					<TextField
-					  variant="outlined"
-					  margin="normal"
-					  select
-					  id="month"
-					  label="Month"
-					  name="month"
-					  onChange={handlePrecMonthChange}
-					>
-						{this.state.month.map((option) => (
-							<MenuItem key={option.month} value={option.month}>
-								{option.month}
-							</MenuItem>
-						))}
-					</TextField>
-					<TextField
-					  variant="outlined"
-					  margin="normal"
-					  select
-					  required
-					  name="year"
-					  label="Year"
-					  type="year"
-					  id="year"
-					  onChange={handlePrecYearChange}
-					>
-						{this.state.year.map((option) => (
-							<MenuItem key={option.year} value={option.year}>
-								{option.year}
-							</MenuItem>
-						))}
-					</TextField>
-					<Button
-					  variant="contained"
-					  color="primary"
-					  onClick={this.getPrecResult}
-					>
-					  Query
-					</Button>
-					<PrecipitationResult data={this.state.precR}/>
-				</form>
+				<form1 className={classes.form1} noValidate>
+					<firstBox className={classes.firstBox} noValidate>
+						<TextField
+						  select
+						  required
+						  id="month"
+						  label="Month"
+						  helperText="Please select month"
+						  onChange={handlePrecMonthChange}
+						>
+							{this.state.month.map((option) => (
+								<MenuItem key={option.month} value={option.month}>
+									{option.month}
+								</MenuItem>
+							))}
+						</TextField>
+					</firstBox>
+					<searchBox className={classes.searchBox} noValidate>
+						<TextField
+						  select
+						  required
+						  name="year"
+						  label="Year"
+						  type="year"
+						  id="year"
+						  helperText="Please select year"
+						  onChange={handlePrecYearChange}
+						>
+							{this.state.year.map((option) => (
+								<MenuItem key={option.year} value={option.year}>
+									{option.year}
+								</MenuItem>
+							))}
+						</TextField>
+					</searchBox>
+					<searchBox className={classes.searchBox} noValidate>
+						<Button
+						  variant="contained"
+						  color="primary"
+						  onClick={this.getPrecResult}
+						>
+						  Query
+						</Button>
+					</searchBox>	
+				</form1>
+				<PrecipitationResult data={this.state.precR}/>
 			  </Grid>
 			  <Grid item xs={6} component={Paper} elevation={6} square>
-				<form className={classes.form1} noValidate>
-					<TextField
-					  variant="outlined"
-					  margin="normal"
-					  select
-					  required
-					  id="month"
-					  label="Month"
-					  name="month"
-					  onChange={handleTempMonthChange}
-					>
-						{this.state.month.map((option) => (
-							<MenuItem key={option.month} value={option.month}>
-								{option.month}
-							</MenuItem>
-						))}
-					</TextField>
-					<TextField
-					  variant="outlined"
-					  margin="normal"
-					  select
-					  required
-					  name="year"
-					  label="Year"
-					  type="year"
-					  id="year"
-					  onChange={handleTempYearChange}
-					>
-						{this.state.year.map((option) => (
-							<MenuItem key={option.year} value={option.year}>
-								{option.year}
-							</MenuItem>
-						))}
-					</TextField>
-					<Button
-					  variant="contained"
-					  color="primary"
-					  onClick={this.getTempResult}
-					>
-					  Query
-					</Button>
-					<TemperatureDiffResult data={this.state.tempR}/>
-				</form>
+				<form1 className={classes.form1} noValidate>
+					<firstBox className={classes.firstBox} noValidate>
+						<TextField
+						  select
+						  required
+						  id="month"
+						  label="Month"
+						  name="month"
+						  helperText="Please select month"
+						  onChange={handleTempMonthChange}
+						>
+							{this.state.month.map((option) => (
+								<MenuItem key={option.month} value={option.month}>
+									{option.month}
+								</MenuItem>
+							))}
+						</TextField>
+					</firstBox>
+					<searchBox className={classes.searchBox} noValidate>
+						<TextField
+						  select
+						  required
+						  name="year"
+						  label="Year"
+						  type="year"
+						  id="year"
+						  helperText="Please select year"
+						  onChange={handleTempYearChange}
+						>
+							{this.state.year.map((option) => (
+								<MenuItem key={option.year} value={option.year}>
+									{option.year}
+								</MenuItem>
+							))}
+						</TextField>
+					</searchBox>
+					<searchBox className={classes.searchBox} noValidate>
+						<Button
+						  variant="contained"
+						  color="primary"
+						  onClick={this.getTempResult}
+						>
+						  Query
+						</Button>
+					</searchBox>
+				</form1>
+				<TemperatureDiffResult data={this.state.tempR}/>
 			  </Grid>
 			  <Grid item xs = {12} component={Paper} elevation={12} square>
 			    <form className={classes.form1} noValidate>

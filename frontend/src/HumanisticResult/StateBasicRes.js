@@ -18,7 +18,7 @@ export default function Result(row) {
             <TableCell>Population</TableCell>
             <TableCell>Perc College</TableCell>
             <TableCell>Poverty</TableCell>
-            <TableCell align="right">Unemployment Rate</TableCell>
+            <TableCell align="right">Unempl- oyment Rate</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

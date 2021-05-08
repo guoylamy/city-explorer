@@ -27,10 +27,10 @@ export default function Result(row) {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Maximum Temperature</TableCell>
-            <TableCell>Minimum Temperature</TableCell>
-            <TableCell align="right">Precipitation</TableCell>
+            <TableCell>Month</TableCell>
+            <TableCell>Maximum Temperature(˚F)</TableCell>
+            <TableCell>Minimum Temperature(˚F)</TableCell>
+            <TableCell align="right">Precipitation(Unit:in)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
