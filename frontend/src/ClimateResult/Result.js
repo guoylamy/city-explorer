@@ -46,7 +46,7 @@ export default function Result(row) {
   console.log('rows', rows); // [{month, prcp, tmax, tmin}]
   return (
     <div >
-      <p>prcp: 10^-3 in, tmax: ˚F, tmax: ˚F</p>
+      <p>prcp: 10^-3 in, tmin: ˚F, tmax: ˚F</p>
         <ComposedChart
           width={800}
           height={600}

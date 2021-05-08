@@ -10,7 +10,7 @@ class Home extends React.Component {
                 <div class="hero-image">
                 <div class="hero-text">
                     <h1>City Explorer</h1>
-                    <p>Find out everything about a city</p>
+                    <p>Find out everything you want to know about a city</p>
                 </div>
                 </div>
                 <div style={{margin: '3%'}}>

@@ -70,7 +70,7 @@ const useStyles = theme => ({
   form1: {
   	margin: theme.spacing(1),
   	alignItems: 'center',
-  	display: 'flex',
+  	display: 'flex'
   },
   submit: {
 	margin: theme.spacing(3, 0, 15),
@@ -562,7 +562,7 @@ class Climate extends React.Component {
 				<TemperatureDiffResult data={this.state.tempR}/>
 			  </Grid>
 			  <Grid item xs = {12} component={Paper} elevation={6} square style={{marginTop: '3%'}}>
-			    <form className={classes.form1} noValidate>
+			    <form className={classes.form1} noValidate style={{margin: 'auto'}}>
 			        <TextField
 					  variant="outlined"
 					  margin="normal"
@@ -598,7 +598,7 @@ class Climate extends React.Component {
 				</form>
 			        
 				<div className="weatherForecastData">
-                    <h1 className="weatherForecastTitle">5-Day Forecast</h1>
+                    <h1 className="weatherForecastTitle">5-Day Weather Forecast</h1>
                     <h5 className="displayWeatherForecastCity">{this.state.displayForecastCity}</h5>
 					<div className={classes.singleWeatherCard}>
                         {this.forecastDailyWeatherCards()}
