@@ -13,6 +13,7 @@ import IncomeInfo from './HumanisticResult/IncomeInfo';
 import StateMuseumRes from './HumanisticResult/StateMuseumRes';
 import StateCollegeRes from './HumanisticResult/StateCollegeRes';
 import StateBasicRes from './HumanisticResult/StateBasicRes';
+import { uri } from './API';
 
 const useStyles = theme => ({
   root: {
@@ -76,7 +77,7 @@ class Humanistic extends React.Component {
 		this.getInfo = this.getInfo.bind(this);
 	}
 	getInfo (){
-		fetch("http://localhost:8081/humanistic/state/museum/"+this.state.selectedState,{
+		fetch(uri + "/humanistic/state/museum/"+this.state.selectedState,{
 		  method: "GET"
 		})
 		.then(res => {
@@ -96,7 +97,7 @@ class Humanistic extends React.Component {
 		  console.log(err);
 		});
 	
-		fetch("http://localhost:8081/humanistic/state/college/"+this.state.selectedState,{
+		fetch(uri + "/humanistic/state/college/"+this.state.selectedState,{
 		  method: "GET"
 		})
 		.then(res => {
@@ -116,7 +117,7 @@ class Humanistic extends React.Component {
 		  console.log(err);
 		});
 	
-		fetch("http://localhost:8081/humanistic/state/basics/"+this.state.selectedState,{
+		fetch(uri + "/humanistic/state/basics/"+this.state.selectedState,{
 		  method: "GET"
 		})
 		.then(res => {
@@ -137,7 +138,7 @@ class Humanistic extends React.Component {
 		});
 	}
 	componentDidMount() {
-		fetch("http://localhost:8081/humanistic/museum_info",{
+		fetch(uri + "/humanistic/museum_info",{
 		  method: "GET"
 		})
 		.then(res => {
@@ -157,7 +158,7 @@ class Humanistic extends React.Component {
 		  console.log(err);
 		});
 
-		fetch("http://localhost:8081/humanistic/employ_info",{
+		fetch(uri + "/humanistic/employ_info",{
 		  method: "GET"
 		})
 		.then(res => {
@@ -177,7 +178,7 @@ class Humanistic extends React.Component {
 		  console.log(err);
 		});
 
-		fetch("http://localhost:8081/humanistic/income_info",{
+		fetch(uri + "/humanistic/income_info",{
 		  method: "GET"
 		})
 		.then(res => {
@@ -197,7 +198,7 @@ class Humanistic extends React.Component {
 		  console.log(err);
 		});
 
-		fetch("http://localhost:8081/getstate",{
+		fetch(uri + "/getstate",{
 		  method: "GET"
 		})
 		.then(res => {

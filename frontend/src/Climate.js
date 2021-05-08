@@ -17,6 +17,7 @@ import TemperatureDiffResult from './ClimateResult/TemperatureDiffResult';
 import WeatherCard from './ClimateResult/WeatherCard';
 import { CardColumns } from "react-bootstrap";
 import { grey } from '@material-ui/core/colors';
+import { uri } from './API';
 
 function Copyright() {
   return (
@@ -122,7 +123,7 @@ class Climate extends React.Component {
 	}
 
 	getClimateResult (){
-		fetch("http://localhost:8081/climate/city/monthly_climate/"+this.state.climateCity+"/"+this.state.climateState,{
+		fetch(uri + "/climate/city/monthly_climate/"+this.state.climateCity+"/"+this.state.climateState,{
 		  method: "GET"
 		})
 		.then(res => {
@@ -143,7 +144,7 @@ class Climate extends React.Component {
 		});
 	}
 	getPrecResult (){
-		fetch("http://localhost:8081/climate/time/prcp/"+this.state.precYear+"/"+this.state.precMonth,{
+		fetch(uri + "/climate/time/prcp/"+this.state.precYear+"/"+this.state.precMonth,{
 		  method: "GET"
 		})
 		.then(res => {
@@ -164,7 +165,7 @@ class Climate extends React.Component {
 		});
 	}
 	getTempResult (){
-		fetch("http://localhost:8081/climate/time/temp_diff/"+this.state.tempYear+"/"+this.state.tempMonth,{
+		fetch(uri + "/climate/time/temp_diff/"+this.state.tempYear+"/"+this.state.tempMonth,{
 		  method: "GET"
 		})
 		.then(res => {
@@ -185,7 +186,7 @@ class Climate extends React.Component {
 		});
 	}
 	componentDidMount() {
-		fetch("http://localhost:8081/climate/getyear",{
+		fetch(uri + "/climate/getyear",{
 		  method: "GET"
 		})
 		.then(res => {
@@ -204,7 +205,7 @@ class Climate extends React.Component {
 		  // Print the error if there is one.
 		  console.log(err);
 		});
-		fetch("http://localhost:8081/climate/getmonth",{
+		fetch(uri + "/climate/getmonth",{
 		  method: "GET"
 		})
 		.then(res => {
@@ -223,7 +224,7 @@ class Climate extends React.Component {
 		  // Print the error if there is one.
 		  console.log(err);
 		});
-		fetch("http://localhost:8081/getstate",{
+		fetch(uri + "/getstate",{
 		  method: "GET"
 		})
 		.then(res => {
@@ -296,7 +297,7 @@ class Climate extends React.Component {
 	}
 
 	getRelatedCity(value) {
-		fetch("http://localhost:8081/getcity/" + value,{
+		fetch(uri + "/getcity/" + value,{
 		  method: "GET"
 		})
 		.then(res => {

@@ -6,3 +6,4 @@ data/*
 dbconfig.json
 *.csv
 ./frontend/node_modules/*
+*.pem
