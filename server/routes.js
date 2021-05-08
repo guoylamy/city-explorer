@@ -269,17 +269,10 @@ const getCitybyState = (req, res) => {
   ==== old query before optimization ===
   ==== time: - 21.189s => 0.061s ===
   var query = `
-  SELECT state_name AS state, MIN(ave_daily_diff) AS temp
-  FROM (state_file sf NATURAL JOIN State_Info) NATURAL JOIN 
-    (SELECT file_name, AVG(ma.tmax - mi.tmin) AS ave_daily_diff
-    FROM (SELECT * FROM climate_tmax_not_null 
-          WHERE MONTH(date_record) = "${inputMonth}" AND YEAR(date_record) = "${inputYear}") ma
-          NATURAL JOIN 
-          (SELECT * FROM climate_tmin_not_null 
-          WHERE MONTH(date_record) = "${inputMonth}" AND YEAR(date_record) = "${inputYear}") mi
-    GROUP BY file_name) dtd
-  GROUP BY state_name
-  ORDER BY MIN(ave_daily_diff) ASC
+  SELECT state, temp
+  FROM month_city_temp_diff_t
+  WHERE year = "${inputYear}" and month = "${inputMonth}"
+  ORDER BY temp asc
   LIMIT 10;
   `;
 */
@@ -391,8 +384,9 @@ const getCityYearlyClimate = (req, res) => {
   var inputState = req.params.state;
   var query = `
   SELECT YEAR(date_record) AS year, AVG(tmax) AS tmax, AVG(tmin) AS tmin
-  FROM climate_data cd INNER JOIN state_city_file scf
-  WHERE scf.state_name = "${inputState}" AND scf.city_name = "${inputCity}" AND cd.tmax IS NOT NULL AND cd.tmin IS NOT NULL
+  FROM climate_data cd 
+  WHERE cd.tmax IS NOT NULL AND cd.tmin IS NOT NULL AND
+      cd.file_name IN (SELECT file_name FROM climate_file_info scf WHERE scf.state_name = "${inputState}"AND scf.city_name = "${inputCity}")
   GROUP BY YEAR(date_record);
   `;
   connection.query(query, function(err, rows, fields) {
