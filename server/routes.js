@@ -242,13 +242,20 @@ const getState = (req, res) => {
   });
 }
 
-const getCitybyState = (req, res) => {
-  var inputState = req.params.state;
-  var query = `
+/*
+  === old query before optimization ===
+  === time: 25.183 => 0.02 ===
   SELECT distinct city_name as city
   FROM state_city_file
   WHERE state_name = "${inputState}"
   ORDER BY city;
+*/
+const getCitybyState = (req, res) => {
+  var inputState = req.params.state;
+  var query = `
+  SELECT city_name AS city
+  FROM climate_state_city
+  WHERE state_name = "${inputState}"
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
@@ -258,10 +265,9 @@ const getCitybyState = (req, res) => {
   });
 }
 
-/* ---- cilmate-time  (1. Top 10 states with smallest average daily temperature difference) ---- */
-const getTop10TempDiff = (req, res) => {
-  var inputYear = req.params.year;
-  var inputMonth = req.params.month;
+/*
+  ==== old query before optimization ===
+  ==== time: - 21.189s => 0.061s ===
   var query = `
   SELECT state_name AS state, MIN(ave_daily_diff) AS temp
   FROM (state_file sf NATURAL JOIN State_Info) NATURAL JOIN 
@@ -276,6 +282,24 @@ const getTop10TempDiff = (req, res) => {
   ORDER BY MIN(ave_daily_diff) ASC
   LIMIT 10;
   `;
+*/
+
+/* ---- cilmate-time  (1. Top 10 states with smallest average daily temperature difference) ---- */
+const getTop10TempDiff = (req, res) => {
+  var inputYear = req.params.year;
+  var inputMonth = req.params.month;
+  var query = `
+  SELECT state_name AS state, MIN(ave_daily_diff) AS temp
+  FROM
+  (SELECT state_name, file_name, AVG(diff) AS ave_daily_diff
+  FROM climate_tdiff_prcp
+  WHERE month_record = "${inputMonth}" AND year_record = "${inputYear}"
+  GROUP BY file_name
+  ) a
+  GROUP BY state_name
+  ORDER BY temp ASC
+  LIMIT 10;
+  `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -284,12 +308,9 @@ const getTop10TempDiff = (req, res) => {
   });
 };
 
-
-/* ---- cilmate-time  (2. Top 10 states with least number of days of precipitation ) ---- */
-const getTop10Prcp = (req, res) => {
-  var inputYear = req.params.year; 
-  var inputMonth = req.params.month;
-  var query = `
+/*
+  === old query before optimization ===
+  === time: 30.471s => 0.05s ===
   SELECT state_name, AVG(rainy_day) as cnt
   FROM 
     (SELECT file_name, COUNT(*) AS rainy_day
@@ -298,6 +319,23 @@ const getTop10Prcp = (req, res) => {
      GROUP BY file_name) rainy_day_info
     NATURAL JOIN state_file 
     NATURAL JOIN State_Info
+  GROUP BY state_name
+  ORDER BY cnt
+  LIMIT 10;
+
+*/
+
+/* ---- cilmate-time  (2. Top 10 states with least number of days of precipitation ) ---- */
+const getTop10Prcp = (req, res) => {
+  var inputYear = req.params.year; 
+  var inputMonth = req.params.month;
+  var query = `
+  SELECT state_name, AVG(rainy_day) as cnt
+  FROM 
+    (SELECT state_name, file_name, COUNT(*) AS rainy_day
+     FROM climate_tdiff_prcp
+     WHERE month_record = "${inputMonth}" AND year_record = "${inputYear}" AND prcp > 0
+     GROUP BY file_name) rainy_day_info
   GROUP BY state_name
   ORDER BY cnt
   LIMIT 10;
@@ -318,14 +356,25 @@ const getTop10Prcp = (req, res) => {
 //     FROM Climate_City_Info cci, (SELECT * FROM City_State NATURAL JOIN City_Name NATURAL JOIN State_Info) cs 
 //     ORDER BY dist LIMIT 1800) fs
 //     GROUP BY file_name;
+
+/*
+  === old query before optimization ===
+  === time: 45.887 => 8.512 ===
+  === note: results differ because the new query omits null values ===
+    SELECT month(date_record) AS month,  AVG(prcp) AS prcp, AVG(tmax) AS tmax, AVG(tmin) AS tmin
+  FROM climate_data cd INNER JOIN state_city_file scf
+  WHERE scf.state_name = "${inputState}" AND scf.city_name = "${inputCity}" AND cd.tmax IS NOT NULL AND cd.tmin IS NOT NULL AND cd.prcp IS NOT NULL
+  GROUP BY month(date_record);
+
+*/
 const getCityMonthlyClimate = (req, res) => {
   var inputCity = req.params.city; 
   var inputState = req.params.state;
   var query = `
-  SELECT month(date_record) AS month,  AVG(prcp) AS prcp, AVG(tmax) AS tmax, AVG(tmin) AS tmin
-  FROM climate_data cd INNER JOIN state_city_file scf
-  WHERE scf.state_name = "${inputState}" AND scf.city_name = "${inputCity}" AND cd.tmax IS NOT NULL AND cd.tmin IS NOT NULL AND cd.prcp IS NOT NULL
-  GROUP BY month(date_record);
+  SELECT month_record AS month,  AVG(prcp) AS prcp, AVG(tmax) AS tmax, AVG(tmin) AS tmin
+  FROM climate_tdiff_prcp
+  WHERE state_name = "${inputState}" AND city_name = "${inputCity}" AND tmax IS NOT NULL AND tmin IS NOT NULL AND prcp IS NOT NULL
+  GROUP BY month_record;
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
