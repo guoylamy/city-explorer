@@ -315,7 +315,6 @@ const getTop10TempDiff = (req, res) => {
   GROUP BY state_name
   ORDER BY cnt
   LIMIT 10;
-
 */
 
 /* ---- cilmate-time  (2. Top 10 states with least number of days of precipitation ) ---- */
@@ -358,16 +357,16 @@ const getTop10Prcp = (req, res) => {
   FROM climate_data cd INNER JOIN state_city_file scf
   WHERE scf.state_name = "${inputState}" AND scf.city_name = "${inputCity}" AND cd.tmax IS NOT NULL AND cd.tmin IS NOT NULL AND cd.prcp IS NOT NULL
   GROUP BY month(date_record);
-
 */
 const getCityMonthlyClimate = (req, res) => {
   var inputCity = req.params.city; 
   var inputState = req.params.state;
   var query = `
-  SELECT month_record AS month,  AVG(prcp) AS prcp, AVG(tmax) AS tmax, AVG(tmin) AS tmin
-  FROM climate_tdiff_prcp
-  WHERE state_name = "${inputState}" AND city_name = "${inputCity}" AND tmax IS NOT NULL AND tmin IS NOT NULL AND prcp IS NOT NULL
-  GROUP BY month_record;
+  SELECT month(date_record) AS month,  AVG(prcp) AS prcp, AVG(tmax) AS tmax, AVG(tmin) AS tmin
+  FROM climate_data cd
+  WHERE cd.tmax IS NOT NULL AND cd.tmin IS NOT NULL AND cd.prcp IS NOT NULL AND
+      cd.file_name IN (SELECT file_name FROM climate_file_info scf WHERE scf.state_name = "${inputState}" AND scf.city_name = "${inputCity}")
+  GROUP BY month(date_record);
   `;
   connection.query(query, function(err, rows, fields) {
     if (err) console.log(err);
