@@ -252,6 +252,10 @@ class Climate extends React.Component {
 	}
 
 	getWeatherForcast() {
+		if (this.state.forecastCity == null || this.state.forecastCity == '') {
+			this.setState({displayForecastCity: "Please type in a city!"});
+			return;
+		}
 		fetch("http://api.openweathermap.org/data/2.5/forecast?q="+this.state.forecastCity + "&appid=" + this.state.weatherapiKey,{
 			method: "GET"
 		})
@@ -287,6 +291,10 @@ class Climate extends React.Component {
 	}
 
 	getWeatherForecastbyZip() {
+		if (this.state.forecastZip == null || this.state.forecastZip == '') {
+			this.setState({displayForecastCity: "Please type in a zipcode!"});
+			return;
+		}
 		fetch("http://api.openweathermap.org/data/2.5/forecast?zip="+this.state.forecastZip + ",us&appid=" + this.state.weatherapiKey,{
 			method: "GET"
 		})
