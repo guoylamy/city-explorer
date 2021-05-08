@@ -351,7 +351,7 @@ const getTop10Prcp = (req, res) => {
 
 /*
   === old query before optimization ===
-  === time: 45.887 => 8.512 ===
+  === time: 45.887 => 0.3 ===
   === note: results differ because the new query omits null values ===
     SELECT month(date_record) AS month,  AVG(prcp) AS prcp, AVG(tmax) AS tmax, AVG(tmin) AS tmin
   FROM climate_data cd INNER JOIN state_city_file scf
