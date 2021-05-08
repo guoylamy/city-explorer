@@ -81,20 +81,44 @@ export default function HomePageTabs() {
   // { markerOffset: 15, name: city,  coordinates: [longitude, latitude]}
   useEffect(() => {
     getPopularCity.then(res => {
-      setPopularCity(res.data);
+      setPopularCity(res.data.map(({city, state, Total_passengers, most_visted_airport}) => {
+        return {
+          City: city,
+          State: state,
+          Passengers: Total_passengers,
+          'Most Popular Airport': most_visted_airport
+        }
+      }));
       setCityMarkers(res.data.map(({city, latitude, longitude}) => { 
         return { markerOffset: 15, name: city,  coordinates: [longitude, latitude]}
       }));
     });
     getPopularFlights.then(res => {
-      setPopularFlights(res.data);
+      console.log(res.data);
+      setPopularFlights(res.data.map(({src_airport, SourceCity, SourceState, dst_airport, DestCity, DestState, passenger_num}) => {
+        return {
+          'Src City': SourceCity,
+          'Src State': SourceState,
+          'Src Airport': src_airport,
+          'Dst City': DestCity,
+          'Dst State': DestState,
+          'Dst Airport': dst_airport,
+          'Passengers': passenger_num
+        }
+      }));
       setFlightMarkers(res.data.flatMap(({dst_airport, src_airport, dst_latitude, dst_longitude, src_latitude, src_longitude}) => [
         {markerOffset: 15, name: dst_airport, coordinates: [dst_longitude, dst_latitude]},
         {markerOffset: 15, name: src_airport, coordinates: [src_longitude, src_latitude]}
       ]));
     });
     getPopularMuseums.then(res => {
-      setPopularMuseums(res.data);
+      setPopularMuseums(res.data.map(({museum_name, city, state	}) => {
+        return {
+          Museum: museum_name,
+          City: city,
+          State: state
+        }
+      }));
       console.log('museums', res.data);
       setMuseumMarkers(res.data.map(({museum_name, latitude, longitude}) => {
         return {

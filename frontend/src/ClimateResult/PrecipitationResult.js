@@ -16,7 +16,7 @@ export default function PrecipitationResult(row) {
         <TableHead>
           <TableRow>
             <TableCell>State</TableCell>
-            <TableCell align="right">Precipitation(Unit: in)</TableCell>
+            <TableCell align="right">Precipitation(in)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

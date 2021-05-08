@@ -10,7 +10,7 @@ export default function IncomeInfo(row) {
   const rows = row.data;
   return (
     <React.Fragment>
-      <Title>Top 5 counties of a given state which have the highest percentage of people who have at least a college degree</Title>
+      <Title>Counties with highest percentage of college graduates</Title>
       <Table size="small">
         <TableHead>
           <TableRow>

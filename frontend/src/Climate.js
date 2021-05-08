@@ -411,7 +411,7 @@ class Climate extends React.Component {
 					<Brightness5Icon />
 				  </Avatar>
 				  <Typography component="h1" variant="h5">
-					City Overview (Monthly)
+					City Monthly Weather Overview
 				  </Typography>
 				  <form className={classes.form} noValidate>
 					<TextField
@@ -457,7 +457,7 @@ class Climate extends React.Component {
 					  className={classes.submit}
 					  onClick={this.getClimateResult}
 					>
-					  City Overview
+					  Get Overview
 					</Button>
 					<Result data={this.state.climateR}/>
 				  </form>
@@ -561,7 +561,7 @@ class Climate extends React.Component {
 				</form1>
 				<TemperatureDiffResult data={this.state.tempR}/>
 			  </Grid>
-			  <Grid item xs = {12} component={Paper} elevation={12} square>
+			  <Grid item xs = {12} component={Paper} elevation={6} square style={{marginTop: '3%'}}>
 			    <form className={classes.form1} noValidate>
 			        <TextField
 					  variant="outlined"
