@@ -491,11 +491,14 @@ const getTop5countyPercCollege = (req, res) => {
 const getBasicsEachCounty = (req, res) => {
   var inputkw = req.params.state;
   var query = `
-    SELECT county, perc_college, poverty_all, population, unemployed_rate
-    FROM Education NATURAL JOIN Poverty_estimate NATURAL JOIN Population_estimate NATURAL JOIN 
-    (SELECT State, unemployed_rate, LEFT(County, LENGTH(County)-4) AS County FROM Unemployment) Unemployment_temp INNER JOIN State_Info s ON State=s.state_id
-    WHERE state_name = "${inputkw}"  
-    GROUP BY county;
+  	SELECT county, perc_college, poverty_all, population, unemployed_rate
+  	FROM 
+  	(SELECT * FROM State_Info WHERE state_name = "${inputkw}") s LEFT JOIN
+  	(SELECT State, County, poverty_all FROM Poverty_estimate) pov ON pov.State=s.state_id NATURAL JOIN 
+  	(SELECT State, County, population from Population_estimate) pop NATURAL JOIN 
+  	(SELECT State, unemployed_rate, LEFT(County, LENGTH(County)-4) County FROM Unemployment) Unemploy NATURAL JOIN
+  	(SELECT State, County, perc_college FROM Education) edu 
+  	GROUP BY county;
 `;
 connection.query(query, function(err, rows, fields) {
   if (err) console.log(err);
