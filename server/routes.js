@@ -71,35 +71,21 @@ connection.query(query, function(err, rows, fields) {
 });
 };
 
-// CREATE VIEW airport_season AS(
-//   SELECT *, COALESCE(
-//     CASE WHEN month(fly_date)<=2 OR month(fly_date)=12 THEN 'winter' ELSE NULL END,
-//     CASE WHEN month(fly_date)>=3 AND month(fly_date)<=5 THEN 'spring' ELSE NULL END,
-//     CASE WHEN month(fly_date)>=6 AND month(fly_date)<=8 THEN 'summer' ELSE NULL END,
-//     CASE WHEN month(fly_date)>=9 AND month(fly_date)<=11 THEN 'fall' ELSE NULL END
-//   ) AS season
-//   FROM Airplane_Route);
-//   CREATE VIEW seaon_route_num AS(
-//   SELECT season, a1.city AS src_city, a1.state AS src_state, 
-//   a2.city AS dst_city, a2.state AS dst_state, SUM(passengers) AS sum_num
-//   FROM airport_season r JOIN Airport a1 ON r.src_airport = a1.airport_code 
-//   JOIN Airport a2 ON r.dst_airport = a2.airport_code
-//   GROUP BY season, src_airport, dst_airport
-//   ORDER BY SUM(passengers) DESC);
+
 /* ---- home (3. popular airplane routes by season) ---- */
 const getTop1Seasonroutes = (req, res) => {
   var query = `
-  SELECT season, src_city, src_state, src_latitude, src_longitude,
-  dst_city, dst_state, latitude AS dst_latitude, longitude AS dst_longitude, passenger_num
-  FROM(
-  SELECT season, src_city, src_state, latitude AS src_latitude, longitude AS src_longitude,
-  dst_city, dst_state,passenger_num
-  FROM(
-  SELECT season, src_city, src_state, dst_city, dst_state, MAX(sum_num) AS passenger_num
-  FROM seaon_route_num
-  GROUP BY season) t1
-  JOIN cityStateLatLon ON t1.src_city=cityStateLatLon.city AND t1.src_state=cityStateLatLon.state_id) t2
-  JOIN cityStateLatLon ON t2.dst_city=cityStateLatLon.city AND t2.dst_state=cityStateLatLon.state_id;
+    SELECT season, MAX(passenger_num) AS passenger_num FROM(
+    SELECT SUM(passengers) AS passenger_num, src_airport, dst_airport, season
+    FROM
+    (SELECT passengers, src_airport, dst_airport, COALESCE(
+    CASE WHEN month(fly_date)<=2 OR month(fly_date)=12 THEN 'winter' ELSE NULL END,
+    CASE WHEN month(fly_date)>=3 AND month(fly_date)<=5 THEN 'spring' ELSE NULL END,
+    CASE WHEN month(fly_date)>=6 AND month(fly_date)<=8 THEN 'summer' ELSE NULL END,
+    CASE WHEN month(fly_date)>=9 AND month(fly_date)<=11 THEN 'fall' ELSE NULL END) AS season
+    FROM Airplane_Route) air_season
+    GROUP BY src_airport, dst_airport, season) num_season
+    GROUP BY season;
   `;
 connection.query(query, function(err, rows, fields) {
   if (err) console.log(err);
