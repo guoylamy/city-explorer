@@ -18,13 +18,21 @@ const connection = mysql.createPool(config);
 //   GROUP BY state, city
 //   ORDER BY SUM(p_num) DESC
 //   LIMIT 10);
-// CREATE VIEW city_airport_info AS(SELECT * FROM  airplane_route_dst_info a NATURAL JOIN mostVisited_city m);
+// CREATE TABLE city_airport_lat_lon (
+//   city varchar(30), state varchar(35), airport_code varchar(20), 
+//   p_num BIGINT, total_p_num BIGINT, 
+//   latitude decimal(8, 4), longitude decimal(8, 4),
+//   PRIMARY KEY (city, state, airport_code));
+//   INSERT INTO city_airport_lat_lon(
+//   SELECT m.city, m.state, airport_code, p_num, total_p_num, latitude, longitude
+//   FROM airplane_route_dst_info a NATURAL JOIN mostVisited_city m 
+//   JOIN cityStateLatLon c ON m.city=c.city AND m.state=c.state_id);
 /* ---- home (1. top 10 popular city and the corresponding airport) ---- */
 const getTop10City = (req, res) => {
   var query = `
   SELECT city, state, total_p_num AS Total_passengers, airport_code AS most_visted_airport, latitude, longitude
-  FROM city_airport_info c1 NATURAL JOIN (SELECT city, state_id AS state, latitude, longtitude AS longitude FROM City_State NATURAL JOIN City_Name GROUP BY city, state_id) ll
-  WHERE p_num >=ALL(SELECT p_num FROM city_airport_info c2 WHERE c1.city=c2.city AND c1.state=c2.state)
+  FROM city_airport_lat_lon c1 
+  WHERE p_num >=ALL(SELECT p_num FROM city_airport_lat_lon c2 WHERE c1.city=c2.city AND c1.state=c2.state)
   ORDER BY total_p_num DESC;
   `;
 connection.query(query, function(err, rows, fields) {
