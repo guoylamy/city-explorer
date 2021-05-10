@@ -13,6 +13,7 @@ class MonthlyRoutesChart extends React.Component {
         getMonthlyRoutesNum.then(res => {
             let data = res.data.sort((a, b) => a.month < b.month ? -1 : (a.month > b.month ? 1 : 0));
             data = data.map(({month, route_num}) => {
+                console.log(typeof(route_num))
                 return { month: monthMap[month], route_num }
             });
             this.setState({data});
@@ -36,8 +37,8 @@ class MonthlyRoutesChart extends React.Component {
                 >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
-                <YAxis type="number" domain={[1450000, 1597370]}/>
-                <Tooltip />
+                <YAxis type="number" domain={[1450000, 1597370]} tickFormatter={(value) => new Intl.NumberFormat('en').format(value)}/>
+                <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)}/>
                 <Legend />
                 <Line
                     type="monotone"

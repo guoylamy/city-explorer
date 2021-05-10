@@ -85,7 +85,7 @@ export default function HomePageTabs() {
         return {
           City: city,
           State: state,
-          Passengers: Total_passengers,
+          Passengers: Total_passengers.toLocaleString(),
           'Most Popular Airport': most_visted_airport
         }
       }));
@@ -103,7 +103,7 @@ export default function HomePageTabs() {
           'Dst City': DestCity,
           'Dst State': DestState,
           'Dst Airport': dst_airport,
-          'Passengers': passenger_num
+          'Passengers': passenger_num.toLocaleString()
         }
       }));
       setFlightMarkers(res.data.flatMap(({dst_airport, src_airport, dst_latitude, dst_longitude, src_latitude, src_longitude}) => [
