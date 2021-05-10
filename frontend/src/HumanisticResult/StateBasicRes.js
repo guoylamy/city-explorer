@@ -24,7 +24,7 @@ export default function Result(row) {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.rank}>
-              <TableCell>{row.county}</TableCell>
+              <TableCell>{row.County}</TableCell>
               <TableCell>{row.population}</TableCell>
               <TableCell>{row.perc_college}</TableCell>
               <TableCell>{row.poverty_all}</TableCell>

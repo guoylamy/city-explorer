@@ -18,13 +18,21 @@ const connection = mysql.createPool(config);
 //   GROUP BY state, city
 //   ORDER BY SUM(p_num) DESC
 //   LIMIT 10);
-// CREATE VIEW city_airport_info AS(SELECT * FROM  airplane_route_dst_info a NATURAL JOIN mostVisited_city m);
+// CREATE TABLE city_airport_lat_lon (
+//   city varchar(30), state varchar(35), airport_code varchar(20), 
+//   p_num BIGINT, total_p_num BIGINT, 
+//   latitude decimal(8, 4), longitude decimal(8, 4),
+//   PRIMARY KEY (city, state, airport_code));
+//   INSERT INTO city_airport_lat_lon(
+//   SELECT m.city, m.state, airport_code, p_num, total_p_num, latitude, longitude
+//   FROM airplane_route_dst_info a NATURAL JOIN mostVisited_city m 
+//   JOIN cityStateLatLon c ON m.city=c.city AND m.state=c.state_id);
 /* ---- home (1. top 10 popular city and the corresponding airport) ---- */
 const getTop10City = (req, res) => {
   var query = `
   SELECT city, state, total_p_num AS Total_passengers, airport_code AS most_visted_airport, latitude, longitude
-  FROM city_airport_info c1 NATURAL JOIN (SELECT city, state_id AS state, latitude, longtitude AS longitude FROM City_State NATURAL JOIN City_Name GROUP BY city, state_id) ll
-  WHERE p_num >=ALL(SELECT p_num FROM city_airport_info c2 WHERE c1.city=c2.city AND c1.state=c2.state)
+  FROM city_airport_lat_lon c1 
+  WHERE p_num >=ALL(SELECT p_num FROM city_airport_lat_lon c2 WHERE c1.city=c2.city AND c1.state=c2.state)
   ORDER BY total_p_num DESC;
   `;
 connection.query(query, function(err, rows, fields) {
@@ -71,35 +79,21 @@ connection.query(query, function(err, rows, fields) {
 });
 };
 
-// CREATE VIEW airport_season AS(
-//   SELECT *, COALESCE(
-//     CASE WHEN month(fly_date)<=2 OR month(fly_date)=12 THEN 'winter' ELSE NULL END,
-//     CASE WHEN month(fly_date)>=3 AND month(fly_date)<=5 THEN 'spring' ELSE NULL END,
-//     CASE WHEN month(fly_date)>=6 AND month(fly_date)<=8 THEN 'summer' ELSE NULL END,
-//     CASE WHEN month(fly_date)>=9 AND month(fly_date)<=11 THEN 'fall' ELSE NULL END
-//   ) AS season
-//   FROM Airplane_Route);
-//   CREATE VIEW seaon_route_num AS(
-//   SELECT season, a1.city AS src_city, a1.state AS src_state, 
-//   a2.city AS dst_city, a2.state AS dst_state, SUM(passengers) AS sum_num
-//   FROM airport_season r JOIN Airport a1 ON r.src_airport = a1.airport_code 
-//   JOIN Airport a2 ON r.dst_airport = a2.airport_code
-//   GROUP BY season, src_airport, dst_airport
-//   ORDER BY SUM(passengers) DESC);
+
 /* ---- home (3. popular airplane routes by season) ---- */
 const getTop1Seasonroutes = (req, res) => {
   var query = `
-  SELECT season, src_city, src_state, src_latitude, src_longitude,
-  dst_city, dst_state, latitude AS dst_latitude, longitude AS dst_longitude, passenger_num
-  FROM(
-  SELECT season, src_city, src_state, latitude AS src_latitude, longitude AS src_longitude,
-  dst_city, dst_state,passenger_num
-  FROM(
-  SELECT season, src_city, src_state, dst_city, dst_state, MAX(sum_num) AS passenger_num
-  FROM seaon_route_num
-  GROUP BY season) t1
-  JOIN cityStateLatLon ON t1.src_city=cityStateLatLon.city AND t1.src_state=cityStateLatLon.state_id) t2
-  JOIN cityStateLatLon ON t2.dst_city=cityStateLatLon.city AND t2.dst_state=cityStateLatLon.state_id;
+    SELECT season, MAX(passenger_num) AS passenger_num FROM(
+    SELECT SUM(passengers) AS passenger_num, src_airport, dst_airport, season
+    FROM
+    (SELECT passengers, src_airport, dst_airport, COALESCE(
+    CASE WHEN month(fly_date)<=2 OR month(fly_date)=12 THEN 'winter' ELSE NULL END,
+    CASE WHEN month(fly_date)>=3 AND month(fly_date)<=5 THEN 'spring' ELSE NULL END,
+    CASE WHEN month(fly_date)>=6 AND month(fly_date)<=8 THEN 'summer' ELSE NULL END,
+    CASE WHEN month(fly_date)>=9 AND month(fly_date)<=11 THEN 'fall' ELSE NULL END) AS season
+    FROM Airplane_Route) air_season
+    GROUP BY src_airport, dst_airport, season) num_season
+    GROUP BY season;
   `;
 connection.query(query, function(err, rows, fields) {
   if (err) console.log(err);
@@ -491,11 +485,14 @@ const getTop5countyPercCollege = (req, res) => {
 const getBasicsEachCounty = (req, res) => {
   var inputkw = req.params.state;
   var query = `
-    SELECT county, perc_college, poverty_all, population, unemployed_rate
-    FROM Education NATURAL JOIN Poverty_estimate NATURAL JOIN Population_estimate NATURAL JOIN 
-    (SELECT State, unemployed_rate, LEFT(County, LENGTH(County)-4) AS County FROM Unemployment) Unemployment_temp INNER JOIN State_Info s ON State=s.state_id
-    WHERE state_name = "${inputkw}"  
-    GROUP BY county;
+  	SELECT county, perc_college, poverty_all, population, unemployed_rate
+  	FROM 
+  	(SELECT * FROM State_Info WHERE state_name = "${inputkw}") s LEFT JOIN
+  	(SELECT State, County, poverty_all FROM Poverty_estimate) pov ON pov.State=s.state_id NATURAL JOIN 
+  	(SELECT State, County, population from Population_estimate) pop NATURAL JOIN 
+  	(SELECT State, unemployed_rate, LEFT(County, LENGTH(County)-4) County FROM Unemployment) Unemploy NATURAL JOIN
+  	(SELECT State, County, perc_college FROM Education) edu 
+  	GROUP BY county;
 `;
 connection.query(query, function(err, rows, fields) {
   if (err) console.log(err);
