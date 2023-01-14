@@ -17,16 +17,16 @@ npm start
 ```
 
 ## Screenshots
-![screenshot1](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot1.png)
-![screenshot2](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot2.png)
-![screenshot3](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot3.png)
-![screenshot4](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot4.png)
-![screenshot5](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot5.png)
-![screenshot6](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot6.png)
-![screenshot7](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot7.png)
-![screenshot8](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot8.png)
-![screenshot9](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot9.png)
-![screenshot10](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot10.png)
+![screenshot1](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot1.png?raw=true)
+![screenshot2](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot2.png?raw=true)
+![screenshot3](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot3.png?raw=true)
+![screenshot4](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot4.png?raw=true)
+![screenshot5](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot5.png?raw=true)
+![screenshot6](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot6.png?raw=true)
+![screenshot7](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot7.png?raw=true)
+![screenshot8](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot8.png?raw=true)
+![screenshot9](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot9.png?raw=true)
+![screenshot10](https://github.com/tkong233/city-explorer/blob/main/screenshots/screenshot10.png?raw=true)
 
 ## Data Sources and Usage
 ### US Airport
@@ -51,7 +51,7 @@ This dataset gives 30K geographic coordinates and the corresponding city name, c
 This dataset is used to join all location related information together. Since the coordinates in this dataset may not exactly match those in other dataset, we approximated the coordinates by finding the nearest coordinates during joins.
 
 ## Database Schema
-![schema](https://github.com/tkong233/city-explorer/blob/main/screenshots/schema.png)
+![schema](https://github.com/tkong233/city-explorer/blob/main/screenshots/schema.png?raw=true)
 ```
 Airplane_Route(id, fly_date, passengers, flights, src_airport, dst_airport) 18,032,495 instances
 src_airport FOREIGN KEY REFERENCES Airport(code) dst_airport FOREIGN KEY REFERENCES Airport(code)
